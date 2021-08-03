@@ -1,16 +1,18 @@
 import express from "express";
 import morgan from "morgan";
-
-const PORT = 4000;
+import globalRouter from "./routers/globalRouter";
+import writeRouter from "./routers/writeRouter";
+import userRouter from "./routers/userRouter";
 
 const app = express();
 const logger = morgan("dev");
 
+app.set("view engine", "react");
+app.set("views", process.cwd() + "/src/views");
 app.use(logger);
-app.get("/", (req, res) => res.send("OPSO"));
+app.use(express.urlencoded({ extended: true }));
+app.use("/", globalRouter);
+app.use("/write", writeRouter);
+app.use("/user", userRouter);
 
-const handleListening = () => {
-  console.log(`✅ Server listenting on port http://localhost:${PORT} 🚀`);
-};
-
-app.listen(PORT, handleListening);
+export default app;
