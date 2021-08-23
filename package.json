@@ -3,12 +3,13 @@
   "version": "1.0.0",
   "description": "B1ND Intern Project OPSO, Server Repository",
   "main": "index.js",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/B1ND-6th-intern/OPSO_Server.git"
   },
   "scripts": {
-    "dev": "nodemon --exec babel-node src/server.js"
+    "dev": "nodemon  --experimental-modules --es-module-specifier-resolution=node src/init.js"
   },
   "author": "",
   "license": "MIT",

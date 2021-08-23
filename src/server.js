@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import express from "express";
 import morgan from "morgan";
 import session from "express-session";
@@ -22,9 +23,12 @@ app.use(
     cookie: {
       maxAge: 86400000,
     },
-    store: MongoStore.create({ mongoUrl: process.env.DB_URL }),
+    store: MongoStore.create({ 
+      mongoUrl: process.env.DB_URL
+    }),
   })
 );
+
 app.use(localsMiddleware);
 app.use("/api/", rootRouter);
 app.use("/api/writing", writingRouter);
