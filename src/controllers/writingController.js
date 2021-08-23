@@ -9,7 +9,7 @@ export const watch = async (req, res) => {
   const { id } = req.params;
   const writing = await Writing.findById(id);
   if (!writing) {
-    return res.render("404", { pageTitle: "Writing not found." });
+    return res.render("404", { pageTitle: "글을 찾을 수 없습니다." });
   }
   return res.render("writings/watch", { pageTitle: writing.title, writing });
 };
@@ -18,7 +18,9 @@ export const getEdit = async (req, res) => {
   const { id } = req.params;
   const writing = await Writing.findById(id);
   if (!writing) {
-    return res.status(404).render("404", { pageTitle: "Writing not found." });
+    return res
+      .status(404)
+      .render("404", { pageTitle: "글을 찾을 수 없습니다." });
   }
   return res.render("writings/edit", {
     pageTitle: `Edit ${writing.title}`,
@@ -31,7 +33,9 @@ export const postEdit = async (req, res) => {
   const { title, text, categories } = req.body;
   const writing = await Writing.exists({ _id: id });
   if (!writing) {
-    return res.status(404).render("404", { pageTitle: "Writing not found." });
+    return res
+      .status(404)
+      .render("404", { pageTitle: "글을 찾을 수 없습니다." });
   }
   await Writing.findByIdAndUpdate(id, {
     title,
