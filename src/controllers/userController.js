@@ -60,6 +60,10 @@ export const postJoin = async (req, res) => {
   }
 };
 
+export const getEmailAuthorization = (req, res) => {
+  return res.render("users/email-auth", { pageTitle: "Email Authorization" });
+};
+
 export const getLogin = (req, res) => {
   return res.render("users/login", { pageTitle: "Login" });
 };

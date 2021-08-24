@@ -19,7 +19,7 @@ const mailOptions = {
   to: rec_name, // list of receivers`
   subject: "OPSO 인증번호", // Subject line
   text: `안녕하세요.
-귀하의 장치를 인식하지 못했기 때문에 추가 확인이 필요한 서명입니다. 로그인을 완료하려면 인식할 수 없는 장치에서 확인 코드를 입력합니다.
+회원 가입을 위해 추가 확인이 필요한 서명입니다. 로그인을 완료하려면 인식할 수 없는 장치에서 확인 코드를 입력합니다.
     
 확인 코드: ${cert_number}
 
