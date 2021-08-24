@@ -18,7 +18,7 @@ export const postJoin = async (req, res) => {
     name,
     isAgree,
   } = req.body;
-    if (!isAgree) {
+  if (!isAgree) {
     return res.status(400).render("users/join", {
       pageTitle,
       errorMessage: "개인정보 수집에 동의해주세요.^^",
@@ -59,6 +59,10 @@ export const postJoin = async (req, res) => {
       errorMessage: error._message,
     });
   }
+};
+
+export const getEmailAuthorization = (req, res) => {
+  return res.render("users/email-auth", { pageTitle: "Email Authorization" });
 };
 
 export const getLogin = (req, res) => {

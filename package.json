@@ -2,7 +2,7 @@
   "name": "opso_server",
   "version": "1.0.0",
   "description": "B1ND Intern Project OPSO, Server Repository",
-  "main": "index.js",
+  "main": "src/init.js",
   "type": "module",
   "repository": {
     "type": "git",
@@ -34,6 +34,6 @@
     "@babel/core": "^7.14.3",
     "@babel/node": "^7.14.2",
     "@babel/preset-env": "^7.14.2",
-    "nodemon": "^2.0.7"
+    "nodemon": "^2.0.12"
   }
 }
