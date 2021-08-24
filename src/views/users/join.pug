@@ -1,0 +1,24 @@
+extends ../base 
+
+block content 
+    if errorMessage
+        span=errorMessage
+    form(method="POST")
+        input(placeholder="Username", name="username", type="text", required)
+        input(placeholder="Password", name="password", type="password", required)
+        input(placeholder="Confirm Password", name="password2", type="password", required)
+        input(placeholder="Grade", name="grade", type="number", required)
+        input(placeholder="Class", name="classNumber", type="number", required)
+        input(placeholder="Number", name="stuNumber", type="number", required)
+        input(placeholder="Email", name="email", type="text", required)
+        input(placeholder="Name", name="name", type="text", required)
+        br
+        label(for="isAgree") 개인정보 수집 동의
+        input(placeholder="isAgree", id="isAgree" name="isAgree", type="checkbox", required)
+        input(type="submit", value="Join")
+
+    hr
+
+    div 
+        span Already have an account?   
+        a(href="/login") Log in now &rarr;

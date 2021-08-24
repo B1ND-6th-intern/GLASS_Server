@@ -28,10 +28,9 @@ app.use(
     }),
   })
 );
-
 app.use(localsMiddleware);
-app.use("/api/", rootRouter);
-app.use("/api/writing", writingRouter);
-app.use("/api/user", userRouter);
+app.use("/", rootRouter);
+app.use("/writing", writingRouter);
+app.use("/user", userRouter);
 
 export default app;
