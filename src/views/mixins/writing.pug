@@ -1,0 +1,10 @@
+mixin writing(writing)
+    div
+        h4
+            a(href=`/writing/${writing.id}`)=writing.title
+        p=writing.text
+        ul
+            each category in writing.categories
+                li=category
+        small=writing.createdAt
+        hr

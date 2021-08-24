@@ -1,0 +1,9 @@
+extends ../base
+
+block content
+    div 
+        p=writing.text 
+        small=writing.createdAt 
+    a(href=`${writing.id}/edit`) Edit Writing &rarr;
+    br
+    a(href=`${writing.id}/delete`) Delete Writing &rarr;
