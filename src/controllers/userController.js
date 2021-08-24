@@ -24,7 +24,7 @@ export const postJoin = async (req, res) => {
     });
   }
   if(password){
-    return res.status(400).render("src/nodemailer/join",)
+    return res.render("src/nodemailer/join",)
   }
   const pageTitle = "Join";
   if (password !== password2) {
