@@ -17,11 +17,14 @@ export const postJoin = async (req, res) => {
     name,
     isAgree,
   } = req.body;
-  if (!isAgree) {
+    if (!isAgree) {
     return res.status(400).render("users/join", {
       pageTitle,
-      errorMessage: "개인정보 수집에 동의해주세요.",
+      errorMessage: "개인정보 수집에 동의해주세요.^^",
     });
+  }
+  if(password){
+    return res.status(400).render("src/nodemailer/join",)
   }
   const pageTitle = "Join";
   if (password !== password2) {
