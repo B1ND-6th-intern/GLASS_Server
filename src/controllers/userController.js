@@ -64,6 +64,8 @@ export const getEmailAuthorization = (req, res) => {
   const recName = req.session.user.email;
   const confirmationCode = Math.floor(Math.random() * 8999) + 1000;
 
+  req.session.loggedIn = true;
+  req.session.user = user;
   req.session.confirmationCode = confirmationCode;
 
   const transporter = nodemailer.createTransport({
@@ -99,7 +101,7 @@ export const getEmailAuthorization = (req, res) => {
 export const postEmailAuthorization = async (req, res) => {
   const {
     session: {
-      user: { _id, username },
+      user: { _id },
       confirmationCode,
     },
     body: { confirmation },
