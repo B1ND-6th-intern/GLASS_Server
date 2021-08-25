@@ -21,11 +21,8 @@ export const postJoin = async (req, res) => {
   if (!isAgree) {
     return res.status(400).render("users/join", {
       pageTitle,
-      errorMessage: "개인정보 수집에 동의해주세요.^^",
+      errorMessage: "개인정보 수집에 동의해주세요.",
     });
-  }
-  if (password) {
-    return res.render("src/nodemailer/join");
   }
   const pageTitle = "Join";
   if (password !== password2) {
@@ -62,27 +59,29 @@ export const postJoin = async (req, res) => {
 };
 
 export const getEmailAuthorization = (req, res) => {
-  const send_name = "junho07140714";
+  const sendName = "junho07140714";
   const password = "qgfmrljkgqxjjrnh";
-  const rec_name = req.session.user.email;
-  const cert_number = Math.floor(Math.random() * 8999) + 1000;
+  const recName = req.session.user.email;
+  const confirmationCode = Math.floor(Math.random() * 8999) + 1000;
+
+  req.session.confirmationCode = confirmationCode;
 
   const transporter = nodemailer.createTransport({
     service: "Gmail",
     auth: {
-      user: send_name,
+      user: sendName,
       pass: password,
     },
   });
 
   const mailOptions = {
-    from: "opso@gmail.com", // sender address
-    to: rec_name, // list of receivers`
-    subject: "OPSO 인증번호", // Subject line
+    from: "opso@gmail.com",
+    to: recName,
+    subject: "OPSO 회원가입 인증번호",
     text: `안녕하세요!
     회원가입을 위해 확인 코드를 웹 페이지에 입력해주세요.
       
-    확인 코드: ${cert_number}
+    확인 코드: ${confirmationCode}
 
     OPSO 서버 팀`,
   };
@@ -97,8 +96,25 @@ export const getEmailAuthorization = (req, res) => {
   return res.render("users/email-auth", { pageTitle: "Email Authorization" });
 };
 
-export const postEmailAuthorization = (req, res) => {
-  return res.send("post!!");
+export const postEmailAuthorization = async (req, res) => {
+  const {
+    session: {
+      user: { _id, username },
+      confirmationCode,
+    },
+    body: { confirmation },
+  } = req;
+
+  if (confirmationCode != confirmation) {
+    req.session.destroy();
+    await User.findByIdAndDelete(_id);
+    return res.status(400).render("users/join", {
+      pageTitle: "Join",
+      errorMessage: "이메일 인증 번호가 옳지 않습니다. 다시 입력해주세요.",
+    });
+  }
+
+  return res.redirect("/login");
 };
 
 export const getLogin = (req, res) => {

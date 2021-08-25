@@ -1,0 +1,8 @@
+extends ../base 
+
+block content 
+    form(method="POST", enctype="multipart/form-data")
+        input(placeholder="Cinfirmation Code", name="confirmation", type="text", required)
+        input(type="submit", value="Submit Confirmation Code")
+        hr
+        a(href="/") If you didn't receive the code &rarr;
