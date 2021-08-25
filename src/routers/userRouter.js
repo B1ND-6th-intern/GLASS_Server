@@ -6,6 +6,8 @@ import {
   see,
   getChangePassword,
   postChangePassword,
+  getEmailAuthorization,
+  postEmailAuthorization,
 } from "../controllers/userController";
 import { protectorMiddleware, publicOnlyMiddleware } from "../middlewares";
 
@@ -18,6 +20,10 @@ userRouter
   .all(protectorMiddleware)
   .get(getChangePassword)
   .post(postChangePassword);
+userRouter
+  .route("/email-auth")
+  .get(getEmailAuthorization)
+  .post(postEmailAuthorization);
 userRouter.get(":id", see);
 
 export default userRouter;
