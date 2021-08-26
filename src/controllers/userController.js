@@ -3,6 +3,8 @@ import fetch from "node-fetch";
 import bcrypt from "bcrypt";
 import nodemailer from "nodemailer";
 
+let joinedUser = {};
+
 export const getJoin = (req, res) =>
   res.render("users/join", { pageTitle: "Join" });
 
@@ -40,7 +42,7 @@ export const postJoin = async (req, res) => {
     });
   }
   try {
-    await User.create({
+    joinedUser = await User.create({
       email,
       username,
       password,
@@ -59,14 +61,11 @@ export const postJoin = async (req, res) => {
 };
 
 export const getEmailAuthorization = (req, res) => {
-  const sendName = "junho07140714";
-  const password = "qgfmrljkgqxjjrnh";
-  const recName = req.session.user.email;
+  const sendName = "glassfromb1nd";
+  const password = process.env.EMAIL_PASSWORD;
+  const recName = joinedUser.email;
   const confirmationCode = Math.floor(Math.random() * 8999) + 1000;
-
-  req.session.loggedIn = true;
-  req.session.user = user;
-  req.session.confirmationCode = confirmationCode;
+  joinedUser.confirmationCode = confirmationCode;
 
   const transporter = nodemailer.createTransport({
     service: "Gmail",
@@ -77,7 +76,7 @@ export const getEmailAuthorization = (req, res) => {
   });
 
   const mailOptions = {
-    from: "opso@gmail.com",
+    from: "glassfromb1nd@gmail.com",
     to: recName,
     subject: "OPSO 회원가입 인증번호",
     text: `안녕하세요!
@@ -100,16 +99,12 @@ export const getEmailAuthorization = (req, res) => {
 
 export const postEmailAuthorization = async (req, res) => {
   const {
-    session: {
-      user: { _id },
-      confirmationCode,
-    },
     body: { confirmation },
   } = req;
 
-  if (confirmationCode != confirmation) {
-    req.session.destroy();
-    await User.findByIdAndDelete(_id);
+  if (joinedUser.confirmationCode != confirmation) {
+    await User.findByIdAndDelete(joinedUser._id);
+    joinedUser = {};
     return res.status(400).render("users/join", {
       pageTitle: "Join",
       errorMessage: "이메일 인증 번호가 옳지 않습니다. 다시 입력해주세요.",

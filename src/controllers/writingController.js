@@ -55,7 +55,7 @@ export const postUpload = async (req, res) => {
     await Writing.create({
       title,
       text,
-      categories: Video.formatCategories(categories),
+      categories: Writing.formatCategories(categories),
     });
     return res.redirect("/");
   } catch (error) {
