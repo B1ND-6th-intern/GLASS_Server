@@ -61,6 +61,10 @@ export const postJoin = async (req, res) => {
 };
 
 export const getEmailAuthorization = (req, res) => {
+  if (joinedUser === {} || joinedUser.isValid === true) {
+    return res.redirect("/");
+  }
+
   const sendName = "glassfromb1nd";
   const password = process.env.EMAIL_PASSWORD;
   const recName = joinedUser.email;
@@ -68,6 +72,7 @@ export const getEmailAuthorization = (req, res) => {
   joinedUser.confirmationCode = confirmationCode;
 
   const transporter = nodemailer.createTransport({
+    sendmail: true,
     service: "Gmail",
     auth: {
       user: sendName,
@@ -94,6 +99,8 @@ export const getEmailAuthorization = (req, res) => {
     console.log("Message %s sent: %s", info.messageId, info.response);
   });
 
+  console.log(confirmationCode);
+
   return res.render("users/email-auth", { pageTitle: "Email Authorization" });
 };
 
@@ -102,13 +109,14 @@ export const postEmailAuthorization = async (req, res) => {
     body: { confirmation },
   } = req;
 
-  if (joinedUser.confirmationCode != confirmation) {
+  if (joinedUser.confirmationCode !== confirmation) {
     await User.findByIdAndDelete(joinedUser._id);
     joinedUser = {};
-    return res.status(400).render("users/join", {
-      pageTitle: "Join",
-      errorMessage: "이메일 인증 번호가 옳지 않습니다. 다시 입력해주세요.",
-    });
+    console.log(typeof joinedUser.confirmationCode, typeof confirmation);
+    console.log(joinedUser.confirmationCode, confirmation);
+    console.log("이메일 인증 번호가 옳지 않습니다. 다시 입력해주세요.");
+    return res.redirect("/join");
+    // errorMessage: "이메일 인증 번호가 옳지 않습니다. 다시 입력해주세요."
   }
 
   return res.redirect("/login");

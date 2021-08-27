@@ -22,7 +22,6 @@ userRouter
   .post(postChangePassword);
 userRouter
   .route("/email-auth")
-  .all(protectorMiddleware)
   .get(getEmailAuthorization)
   .post(postEmailAuthorization);
 userRouter.get(":id", see);

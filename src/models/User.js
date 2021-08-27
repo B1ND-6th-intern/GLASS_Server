@@ -9,6 +9,7 @@ const userSchema = new mongoose.Schema({
   grade: { type: Number, required: true },
   classNumber: { type: Number, required: true },
   stuNumber: { type: Number, required: true },
+  isValid: { type: Boolean, default: false },
 });
 
 userSchema.pre("save", async function () {
