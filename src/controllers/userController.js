@@ -68,11 +68,13 @@ export const getEmailAuthorization = (req, res) => {
   const sendName = "glassfromb1nd";
   const password = process.env.EMAIL_PASSWORD;
   const recName = joinedUser.email;
-  const confirmationCode = Math.floor(Math.random() * 8999) + 1000;
+  //const confirmationCode = Math.floor(Math.random() * 8999) + 1000;
+  const confirmationCode = 3000;
   joinedUser.confirmationCode = confirmationCode;
 
   const transporter = nodemailer.createTransport({
     sendmail: true,
+    secure : false,
     service: "Gmail",
     auth: {
       user: sendName,
@@ -109,16 +111,24 @@ export const postEmailAuthorization = async (req, res) => {
     body: { confirmation },
   } = req;
 
-  if (joinedUser.confirmationCode !== confirmation) {
-    await User.findByIdAndDelete(joinedUser._id);
-    joinedUser = {};
+  console.log(joinedUser.confirmationCode)
+  console.log(confirmation)
+  console.log(req)
+  console.log(Number(joinedUser.confirmationCode) !== Number(confirmation))
+
+  if (Number(joinedUser.confirmationCode) !== Number(confirmation)) {
     console.log(typeof joinedUser.confirmationCode, typeof confirmation);
     console.log(joinedUser.confirmationCode, confirmation);
+    await User.findByIdAndDelete(joinedUser._id);
+    joinedUser = {};
+    
     console.log("이메일 인증 번호가 옳지 않습니다. 다시 입력해주세요.");
     return res.redirect("/join");
     // errorMessage: "이메일 인증 번호가 옳지 않습니다. 다시 입력해주세요."
   }
 
+  joinedUser.isValid = true;
+  joinedUser.save();
   return res.redirect("/login");
 };
 
@@ -130,14 +140,15 @@ export const postLogin = async (req, res) => {
   const { username, password } = req.body;
   const pageTitle = "Login";
   const user = await User.findOne({ username });
+  if(!user.isValid) return res.redirect('/user/email-auth');
   if (!user) {
     return res.status(400).render("users/login", {
       pageTitle,
       errorMessage: "이 username을 가진 계정이 존재하지 않습니다.",
     });
   }
-  const ok = await bcrypt.compare(password, user.password);
-  if (!ok) {
+  //const ok = await bcrypt.compare(password, user.password);
+  if (String(password) !== String(user.password)) {
     return res.status(400).render("users/login", {
       pageTitle,
       errorMessage: "비밀번호가 옳지 않습니다.",
