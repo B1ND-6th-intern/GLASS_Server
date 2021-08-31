@@ -53,6 +53,7 @@ export const postJoin = async (req, res) => {
     });
     return res.redirect("/user/email-auth");
   } catch (error) {
+    console.log(error);
     return res.status(400).render("users/join", {
       pageTitle,
       errorMessage: error._message,
