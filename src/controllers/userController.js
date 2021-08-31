@@ -53,7 +53,6 @@ export const postJoin = async (req, res) => {
     });
     return res.redirect("/user/email-auth");
   } catch (error) {
-    console.log(error);
     return res.status(400).render("users/join", {
       pageTitle,
       errorMessage: error._message,
@@ -137,8 +136,8 @@ export const postLogin = async (req, res) => {
       errorMessage: "이 username을 가진 계정이 존재하지 않습니다.",
     });
   }
-  //const ok = await bcrypt.compare(password, user.password);
-  if (String(password) !== String(user.password)) {
+  const ok = await bcrypt.compare(password, user.password);
+  if (!ok) {
     return res.status(400).render("users/login", {
       pageTitle,
       errorMessage: "비밀번호가 옳지 않습니다.",
