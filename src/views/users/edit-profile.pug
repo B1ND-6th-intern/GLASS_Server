@@ -1,9 +1,8 @@
 extends ../base 
 
 block content 
-    form(method="POST", enctype="multipart/form-data")
+    form(method="POST")
         input(placeholder="Name", name="name", type="text", required, value=loggedInUser.name)
-        input(placeholder="Username", name="username", type="text", required, value=loggedInUser.name)
         input(placeholder="Email", name="email", type="email", required, value=loggedInUser.email)
         input(type="submit", value="Update Profile")
         hr
