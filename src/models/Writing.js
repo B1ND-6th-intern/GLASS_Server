@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const writingSchema = new mongoose.Schema({
   title: { type: String, required: true, trim: true, maxLength: 80 },
-  text: { type: String, required: true, trim: true, minLength: 1 },
+  text: { type: String, required: true, trim: true },
   createdAt: { type: Date, required: true, default: Date.now },
   categories: [{ type: String, trim: true }],
   meta: {
