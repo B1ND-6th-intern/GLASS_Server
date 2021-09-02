@@ -7,7 +7,6 @@ let joinedUser = null;
 
 export const postJoin = async (req, res) => {
   const {
-    username,
     password,
     password2,
     grade,
@@ -28,17 +27,15 @@ export const postJoin = async (req, res) => {
       error: "비밀번호가 일치하지 않습니다.",
     });
   }
-  const exists = await User.exists({ $or: [{ username }, { email }] });
+  const exists = await User.exists({ email: email });
   if (exists) {
     return res.status(400).json({
-      error:
-        "이 username/email은 이미 사용되고 있습니다. 다른 username/email로 바꿔주세요.",
+      error: "이 email은 이미 사용되고 있습니다. 다른 email로 바꿔주세요.",
     });
   }
   try {
     joinedUser = await User.create({
       email,
-      username,
       password,
       name,
       grade,
@@ -94,7 +91,6 @@ export const getEmailAuthorization = (req, res) => {
     }
     console.log("Message %s sent: %s", info.messageId, info.response);
   });
-  //return res.render("users/email-auth", { pageTitle: "Email Authorization" });
   return res.status(200).json({
     message: "메일발송 성공",
   });
@@ -106,8 +102,6 @@ export const postEmailAuthorization = async (req, res) => {
   } = req;
 
   if (Number(joinedUser.confirmationCode) !== Number(confirmation)) {
-    console.log(typeof joinedUser.confirmationCode, typeof confirmation);
-    console.log(joinedUser.confirmationCode, confirmation);
     await User.findByIdAndDelete(joinedUser._id);
     joinedUser = null;
     return res.status(400).json({
@@ -123,16 +117,16 @@ export const postEmailAuthorization = async (req, res) => {
 };
 
 export const postLogin = async (req, res) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
   const pageTitle = "Login";
-  const user = await User.findOne({ username });
+  const user = await User.findOne({ email });
   if (!user.isValid)
     return res.status(400).json({
       error: "Email 인증이 되지 않았습니다.",
     });
   if (!user) {
     return res.status(400).json({
-      error: "이 username을 가진 계정이 존재하지 않습니다.",
+      error: "이 Email을 가진 계정이 존재하지 않습니다.",
     });
   }
   const ok = await bcrypt.compare(password, user.password);
@@ -160,7 +154,7 @@ export const postEdit = async (req, res) => {
     session: {
       user: { _id },
     },
-    body: { name, username, email },
+    body: { name, email },
     file,
   } = req;
   const findEmail = await User.findOne({ email });
@@ -176,7 +170,6 @@ export const postEdit = async (req, res) => {
     {
       name,
       email,
-      username,
     },
     { new: true }
   );
