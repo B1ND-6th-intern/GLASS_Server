@@ -50,13 +50,20 @@ export const getUpload = (req, res) => {
 };
 
 export const postUpload = async (req, res) => {
+  const {
+    user: { _id },
+  } = req.session;
   const { title, text, categories } = req.body;
   try {
-    await Writing.create({
+    const newVideo = await Writing.create({
       title,
       text,
+      owner: _id,
       categories: Writing.formatCategories(categories),
     });
+    const user = await User.findById(_id);
+    user.writings.push(newVideo._id);
+    user.save();
     return res.redirect("/");
   } catch (error) {
     return res.status(400).render("writings/upload", {
