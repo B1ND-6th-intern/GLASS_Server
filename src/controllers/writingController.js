@@ -2,28 +2,31 @@ import Writing from "../models/Writing";
 
 export const home = async (req, res) => {
   const writings = await Writing.find({}).sort({ createdAt: "desc" });
-  return res.render("home", { pageTitle: "Home", writings });
+  return res.status(200).json({
+    writings,
+  });
 };
 
 export const watch = async (req, res) => {
   const { id } = req.params;
   const writing = await Writing.findById(id);
   if (!writing) {
-    return res.render("404", { pageTitle: "글을 찾을 수 없습니다." });
+    return res.status(404).json({
+      message: "글을 찾을 수 없습니다.",
+    });
   }
-  return res.render("writings/watch", { pageTitle: writing.title, writing });
+  return res.status(200).json({
+    writing,
+  });
 };
 
 export const getEdit = async (req, res) => {
   const { id } = req.params;
   const writing = await Writing.findById(id);
   if (!writing) {
-    return res
-      .status(404)
-      .render("404", { pageTitle: "글을 찾을 수 없습니다." });
+    return res.status(404).json({ error: "글을 찾을 수 없습니다." });
   }
-  return res.render("writings/edit", {
-    pageTitle: `Edit ${writing.title}`,
+  return res.status(200).json({
     writing,
   });
 };
@@ -33,20 +36,24 @@ export const postEdit = async (req, res) => {
   const { title, text, categories } = req.body;
   const writing = await Writing.exists({ _id: id });
   if (!writing) {
-    return res
-      .status(404)
-      .render("404", { pageTitle: "글을 찾을 수 없습니다." });
+    return res.status(404).json({
+      error: "글을 찾을 수 없습니다.",
+    });
   }
   await Writing.findByIdAndUpdate(id, {
     title,
     text,
     categories: Writing.formatCategories(categories),
   });
-  return res.redirect(`/writing/${id}`);
+  return res.status(200).json({
+    id,
+  });
 };
 
 export const getUpload = (req, res) => {
-  return res.render("writings/upload", { pageTitle: "Upload Writing" });
+  return res.status(200).json({
+    message: "Upload Writing",
+  });
 };
 
 export const postUpload = async (req, res) => {
@@ -64,11 +71,12 @@ export const postUpload = async (req, res) => {
     const user = await User.findById(_id);
     user.writings.push(newVideo._id);
     user.save();
-    return res.redirect("/");
+    return res.status(200).json({
+      message: "업로드 성공!",
+    });
   } catch (error) {
-    return res.status(400).render("writings/upload", {
-      pageTitle: "Upload Writing",
-      errorMessage: error._message,
+    return res.status(400).render({
+      error: "업로드 실패",
     });
   }
 };
@@ -76,7 +84,9 @@ export const postUpload = async (req, res) => {
 export const deleteWriting = async (req, res) => {
   const { id } = req.params;
   await Writing.findByIdAndDelete(id);
-  return res.redirect("/");
+  return res.status(200).json({
+    message: "삭제 성공!",
+  });
 };
 
 export const search = async (req, res) => {
@@ -89,5 +99,7 @@ export const search = async (req, res) => {
       },
     });
   }
-  return res.render("writings/search", { pageTitle: "Search", writings });
+  return res.render({
+    writings,
+  });
 };

@@ -18,7 +18,6 @@ userRouter.route("/edit").all(protectorMiddleware).get(getEdit).post(postEdit);
 userRouter
   .route("/change-password")
   .all(protectorMiddleware)
-  .get(getChangePassword)
   .post(postChangePassword);
 userRouter
   .route("/email-auth")
