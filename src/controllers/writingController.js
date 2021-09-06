@@ -69,7 +69,8 @@ export const postUpload = async (req, res) => {
       message: "업로드 성공!",
     });
   } catch (error) {
-    return res.status(400).render({
+    console.log(error);
+    return res.status(400).json({
       error: "업로드 실패",
     });
   }
