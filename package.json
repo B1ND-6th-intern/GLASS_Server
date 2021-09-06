@@ -1,12 +1,12 @@
 {
   "name": "opso_server",
   "version": "1.0.0",
-  "description": "B1ND Intern Project OPSO, Server Repository",
+  "description": "B1ND Intern Project GLASS, Server(API) Repository",
   "main": "src/init.js",
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/B1ND-6th-intern/OPSO_Server.git"
+    "url": "git+https://github.com/B1ND-6th-intern/GLASS_Server.git"
   },
   "scripts": {
     "dev": "nodemon  --experimental-modules --es-module-specifier-resolution=node src/init.js"
@@ -14,9 +14,9 @@
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/B1ND-6th-intern/OPSO_Server/issues"
+    "url": "https://github.com/B1ND-6th-intern/GLASS_Server/issues"
   },
-  "homepage": "https://github.com/B1ND-6th-intern/OPSO_Server#readme",
+  "homepage": "https://github.com/B1ND-6th-intern/GLASS_Server#readme",
   "dependencies": {
     "bcrypt": "^5.0.1",
     "connect-mongo": "^4.4.1",
