@@ -1,2 +1,3 @@
-# OPSO_Server
-B1ND Intern Project OPSO, Server Repository
+# GLASS_Server
+
+B1ND Intern Project GLASS, Server(API) Repository
