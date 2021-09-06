@@ -116,14 +116,16 @@ export const postEmailAuthorization = async (req, res) => {
     await User.findByIdAndDelete(joinedUser._id);
     joinedUser = null;
     return res.status(400).json({
-      error: "이메일 인증 번호가 옳지 않습니다. 다시 입력해주세요.",
+      error: "The email verification number is incorrect. Please re-enter.",
+      //이메일 인증 번호가 옳지 않습니다. 다시 입력해주세요.
     });
   }
 
   joinedUser.isValid = true;
   joinedUser.save();
   return res.status(200).json({
-    message: "Email인증 성공!",
+    message: "Email Verification Success!",
+    //Email인증 성공!
   });
 };
 
@@ -133,30 +135,35 @@ export const postLogin = async (req, res) => {
   const user = await User.findOne({ email });
   if (!user.isValid)
     return res.status(400).json({
-      error: "Email 인증이 되지 않았습니다.",
+      error: "Email is not verified.",
+      //Email 인증이 되지 않았습니다.
     });
   if (!user) {
     return res.status(400).json({
-      error: "이 Email을 가진 계정이 존재하지 않습니다.",
+      error: "An account with this email does not exist.",
+      //이 Email을 가진 계정이 존재하지 않습니다.
     });
   }
   const ok = await bcrypt.compare(password, user.password);
   if (!ok) {
     return res.status(400).json({
-      error: "비밀번호가 옳지 않습니다.",
+      error: "The password is incorrect.",
+      //비밀번호가 옳지 않습니다.
     });
   }
   req.session.loggedIn = true;
   req.session.user = user;
   return res.status(200).json({
-    message: "로그인 성공!",
+    message: "Succeed log-in!",
+    //로그인 성공!
   });
 };
 
 export const logout = (req, res) => {
   req.session.destroy();
   return res.status(200).json({
-    message: "로그아웃 성공!",
+    message: "Succeed log-out!",
+    //로그아웃 성공!
   });
 };
 
@@ -172,7 +179,8 @@ export const postEdit = async (req, res) => {
   if (findEmail !== null) {
     if (findEmail._id.toString() !== _id) {
       return res.status(400).json({
-        error: "이 email은 이미 존재합니다.",
+        error: "This email already exists.",
+        //이 email은 이미 존재합니다.
       });
     }
   }
@@ -186,7 +194,8 @@ export const postEdit = async (req, res) => {
   );
   req.session.user = updatedUser;
   return res.status(200).json({
-    message: "회원정보 수정 성공!",
+    message: "Member information modification successful!",
+    //회원정보 수정 성공
   });
 };
 
@@ -201,18 +210,21 @@ export const postChangePassword = async (req, res) => {
   const ok = await bcrypt.compare(oldPassword, user.password);
   if (!ok) {
     return res.status(400).json({
-      error: "현재 비밀번호가 옳지 않습니다.",
+      error: "The current password is incorrect.",
+      //현재 비밀번호가 옳지 않습니다.
     });
   }
   if (newPassword !== newPasswordConfirmation) {
     return res.status(400).json({
-      error: "새로운 비밀번호가 일치하지 않습니다.",
+      error: "The new passwords do not match.",
+      //새로운 비밀번호가 일치하지 않습니다.
     });
   }
   user.password = newPassword;
   await user.save();
   return res.status(200).json({
-    message: "비밀번호 변경 성공!",
+    message: "Succeed changed password",
+    //비밀번호 변경 성공
   });
 };
 
@@ -222,6 +234,7 @@ export const see = async (req, res) => {
   if (!user) {
     return res.status(404).json({
       error: "User not found",
+      //유저를 찾지 못했습니다.
     });
   }
   return res.status(200).json({
