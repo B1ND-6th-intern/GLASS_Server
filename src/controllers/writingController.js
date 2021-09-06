@@ -50,12 +50,6 @@ export const postEdit = async (req, res) => {
   });
 };
 
-export const getUpload = (req, res) => {
-  return res.status(200).json({
-    message: "Upload Writing",
-  });
-};
-
 export const postUpload = async (req, res) => {
   const {
     user: { _id },

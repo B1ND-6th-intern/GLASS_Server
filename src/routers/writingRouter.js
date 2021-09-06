@@ -1,7 +1,6 @@
 import express from "express";
 import {
   watch,
-  getUpload,
   postUpload,
   getEdit,
   postEdit,
@@ -17,14 +16,11 @@ writingRouter
   .all(protectorMiddleware)
   .get(getEdit)
   .post(postEdit);
-writingRouter
-  .route("/:id([0-9a-f]{24})/delete")
-  .all(protectorMiddleware)
-  .get(deleteWriting);
-writingRouter
-  .route("/upload")
-  .all(protectorMiddleware)
-  .get(getUpload)
-  .post(postUpload);
+writingRouter.get(
+  "/:id([0-9a-f]{24})/delete",
+  protectorMiddleware,
+  deleteWriting
+);
+writingRouter.post("/upload", protectorMiddleware, postUpload);
 
 export default writingRouter;

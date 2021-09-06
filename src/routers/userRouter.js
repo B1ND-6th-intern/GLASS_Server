@@ -1,10 +1,8 @@
 import express from "express";
 import {
-  //getEdit,
   postEdit,
   logout,
   see,
-  //getChangePassword,
   postChangePassword,
   getEmailAuthorization,
   postEmailAuthorization,
@@ -14,11 +12,8 @@ import { protectorMiddleware, publicOnlyMiddleware } from "../middlewares";
 const userRouter = express.Router();
 
 userRouter.get("/logout", protectorMiddleware, logout);
-userRouter.route("/edit").all(protectorMiddleware).get().post(postEdit);
-userRouter
-  .route("/change-password")
-  .all(protectorMiddleware)
-  .post(postChangePassword);
+userRouter.post("/edit", protectorMiddleware, postEdit);
+userRouter.post("/change-password", protectorMiddleware, postChangePassword);
 userRouter
   .route("/email-auth")
   .get(getEmailAuthorization)
