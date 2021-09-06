@@ -15,7 +15,6 @@ export const postJoin = async (req, res) => {
     name,
     isAgree,
   } = req.body;
-  console.log(req.body);
   if (isAgree !== true) {
     return res.status(400).json({
       status: 400,

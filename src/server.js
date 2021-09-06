@@ -7,6 +7,7 @@ import rootRouter from "./routers/rootRouter";
 import writingRouter from "./routers/writingRouter";
 import userRouter from "./routers/userRouter";
 import { localsMiddleware } from "./middlewares";
+import cors from "cors";
 
 const app = express();
 const logger = morgan("dev");
@@ -16,6 +17,7 @@ app.set("views", process.cwd() + "/src/views");
 app.use(logger);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cors());
 app.use(
   session({
     secret: process.env.COOKIE_SECRET,
