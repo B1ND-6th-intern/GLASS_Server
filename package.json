@@ -1,5 +1,5 @@
 {
-  "name": "opso_server",
+  "name": "glass_server",
   "version": "1.0.0",
   "description": "B1ND Intern Project GLASS, Server(API) Repository",
   "main": "src/init.js",
