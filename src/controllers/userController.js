@@ -18,19 +18,22 @@ export const postJoin = async (req, res) => {
   console.log(req.body);
   if (isAgree !== true) {
     return res.status(400).json({
-      error: "개인정보 수집에 동의해주세요.",
+      error: "Please agree to the collection of personal information.",
+      //개인정보 수집에 동의해주세요.
     });
   }
   const pageTitle = "Join";
   if (password !== password2) {
     return res.status(400).json({
-      error: "비밀번호가 일치하지 않습니다.",
+      error: "Password is different",
+      //비밀번호가 일치하지 않습니다
     });
   }
   const exists = await User.exists({ email: email });
   if (exists) {
     return res.status(400).json({
-      error: "이 email은 이미 사용되고 있습니다. 다른 email로 바꿔주세요.",
+      error: "This email is already in use, Please change to another email.",
+      //이 email은 이미 사용되고 있습니다. 다른 email로 바꿔주세요.
     });
   }
   try {
@@ -48,16 +51,18 @@ export const postJoin = async (req, res) => {
     });
   } catch (error) {
     return res.status(400).json({
-      error: "회원가입에 실패하였습니다. 다시 시도해주십시오.",
+      error: "Registration failed, Please try again.",
+      //회원가입에 실패하였습니다. 다시 시도해주십시오.
     });
   }
 };
 
 export const getEmailAuthorization = (req, res) => {
   if (joinedUser === null || joinedUser.isValid === true) {
-    res
-      .status(400)
-      .json({ error: "이미 인증된 계정이거나 비정상적인 접근입니다." });
+    res.status(400).json({
+      error: "It is an already authenticated account or abnormal access.",
+      //이미 인증된 계정이거나 비정상적인 접근입니다.
+    });
   }
   const sendName = "glassfromb1nd@gmail.com";
   const password = process.env.EMAIL_PASSWORD;
@@ -90,13 +95,15 @@ export const getEmailAuthorization = (req, res) => {
     if (error) {
       console.log(error);
       return res.status(400).json({
-        error: "메일 발송에 실패하였습니다.",
+        error: "Failed to send mail.",
+        //메일 발송에 실패하였습니다.
       });
     }
     console.log("Message %s sent: %s", info.messageId, info.response);
   });
   return res.status(200).json({
-    message: "메일발송 성공",
+    message: "Succeeded to send mail.",
+    //
   });
 };
 
