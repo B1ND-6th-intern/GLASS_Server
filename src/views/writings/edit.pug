@@ -1,9 +1,0 @@
-extends ../base.pug
-
-block content
-    h4 Update Video
-    form(method="POST")
-        input(name="title", placeholder="Writing Title", value=writing.title, required)
-        input(placeholder="Text", required, type="text", name="text", minlength=1, value=writing.text)
-        input(placeholder="Categories, separated by comma.", required, type="text", name="categories", value=writing.categories.join())
-        input(value="Save", type="submit")

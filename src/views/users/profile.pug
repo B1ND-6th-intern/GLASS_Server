@@ -1,8 +1,0 @@
-extends ../base 
-include ../mixins/writing
-
-block content 
-    each writing in user.writings 
-        +writing(writing)
-    else 
-        li nothing uploaded
