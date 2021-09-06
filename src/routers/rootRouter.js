@@ -12,9 +12,10 @@ rootRouter
   .all(publicOnlyMiddleware)
   .get(() => {})
   .post(postJoin);
-rootRouter.route("/login");
-rootRouter.all(publicOnlyMiddleware);
-rootRouter.post(postLogin);
-rootRouter.get("/search", search);
+rootRouter
+  .route("/login")
+  .all(publicOnlyMiddleware)
+  .post(postLogin)
+  .get("/search", search);
 
 export default rootRouter;
