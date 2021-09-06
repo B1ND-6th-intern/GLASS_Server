@@ -3,6 +3,7 @@ import Writing from "../models/Writing";
 export const home = async (req, res) => {
   const writings = await Writing.find({}).sort({ createdAt: "desc" });
   return res.status(200).json({
+    status: 200,
     writings,
   });
 };
@@ -12,10 +13,12 @@ export const watch = async (req, res) => {
   const writing = await Writing.findById(id);
   if (!writing) {
     return res.status(404).json({
+      status: 404,
       message: "글을 찾을 수 없습니다.",
     });
   }
   return res.status(200).json({
+    status: 200,
     writing,
   });
 };
@@ -24,9 +27,13 @@ export const getEdit = async (req, res) => {
   const { id } = req.params;
   const writing = await Writing.findById(id);
   if (!writing) {
-    return res.status(404).json({ error: "글을 찾을 수 없습니다." });
+    return res.status(404).json({
+      status: 404,
+      error: "글을 찾을 수 없습니다.",
+    });
   }
   return res.status(200).json({
+    status: 200,
     writing,
   });
 };
@@ -37,6 +44,7 @@ export const postEdit = async (req, res) => {
   const writing = await Writing.exists({ _id: id });
   if (!writing) {
     return res.status(404).json({
+      status: 404,
       error: "글을 찾을 수 없습니다.",
     });
   }
@@ -46,6 +54,7 @@ export const postEdit = async (req, res) => {
     categories: Writing.formatCategories(categories),
   });
   return res.status(200).json({
+    status: 200,
     id,
   });
 };
@@ -66,11 +75,13 @@ export const postUpload = async (req, res) => {
     user.writings.push(newVideo._id);
     user.save();
     return res.status(200).json({
+      status: 200,
       message: "업로드 성공!",
     });
   } catch (error) {
     console.log(error);
     return res.status(400).json({
+      status: 400,
       error: "업로드 실패",
     });
   }
@@ -80,6 +91,7 @@ export const deleteWriting = async (req, res) => {
   const { id } = req.params;
   await Writing.findByIdAndDelete(id);
   return res.status(200).json({
+    status: 200,
     message: "삭제 성공!",
   });
 };
@@ -94,7 +106,8 @@ export const search = async (req, res) => {
       },
     });
   }
-  return res.render({
+  return res.status(200).json({
+    status: 200,
     writings,
   });
 };
