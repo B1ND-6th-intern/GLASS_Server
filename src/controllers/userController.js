@@ -1,6 +1,8 @@
 import User from "../models/User";
+import Authorization from "../models/Authorization";
 import bcrypt from "bcrypt";
 import nodemailer from "nodemailer";
+import { introspectionFromSchema } from "graphql";
 
 let joinedUser = null;
 
@@ -46,6 +48,10 @@ export const postJoin = async (req, res) => {
       grade,
       classNumber,
       stuNumber,
+    });
+    await Authorization.create({
+      authCount: 0,
+      authUser: joinedUser._id,
     });
     return res.status(200).json({
       status: 200,
@@ -114,13 +120,26 @@ export const getEmailAuthorization = (req, res) => {
 };
 
 export const postEmailAuthorization = async (req, res) => {
+  const authorization = await Authorization.findOne({
+    authUser: joinedUser._id,
+  });
+  if (authorization.authCount >= 5) {
+    await Authorization.findByIdAndDelete(authorization._id);
+    await User.findByIdAndDelete(joinedUser._id);
+    joinedUser = null;
+    return res.status(400).json({
+      status: 400,
+      error:
+        "The email verification number is incorrect 5 times. You have to sign up again.",
+      //이메일 인증 번호가 5번 틀렸습니다. 다시 회원가입 해주세요.
+    });
+  }
   const {
     body: { confirmation },
   } = req;
-
   if (Number(joinedUser.confirmationCode) !== Number(confirmation)) {
-    await User.findByIdAndDelete(joinedUser._id);
-    joinedUser = null;
+    authorization.authCount += 1;
+    authorization.save();
     return res.status(400).json({
       status: 400,
       error: "The email verification number is incorrect. Please re-enter.",
