@@ -15,7 +15,8 @@ export const postJoin = async (req, res) => {
     name,
     isAgree,
   } = req.body;
-  if (!isAgree) {
+  console.log(req.body);
+  if (isAgree !== true) {
     return res.status(400).json({
       error: "개인정보 수집에 동의해주세요.",
     });
@@ -40,6 +41,10 @@ export const postJoin = async (req, res) => {
       grade,
       classNumber,
       stuNumber,
+    });
+    return res.status(200).json({
+      message: "succeeded register!",
+      //회원가입 성공
     });
   } catch (error) {
     return res.status(400).json({
