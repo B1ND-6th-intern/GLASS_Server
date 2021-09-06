@@ -105,7 +105,6 @@ export const getEmailAuthorization = (req, res) => {
         //메일 발송에 실패하였습니다.
       });
     }
-    console.log("Message %s sent: %s", info.messageId, info.response);
   });
   return res.status(200).json({
     status: 200,
