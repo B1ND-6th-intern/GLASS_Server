@@ -1,22 +1,20 @@
 import express from "express";
-import {
-  getJoin,
-  postJoin,
-  getLogin,
-  postLogin,
-} from "../controllers/userController";
+import { postJoin, postLogin } from "../controllers/userController";
+//import { postJoin, getLogin, postLogin } from "../controllers/userController";
 import { home, search } from "../controllers/writingController";
 import { publicOnlyMiddleware } from "../middlewares";
 
 const rootRouter = express.Router();
 
 rootRouter.get("/", home);
-rootRouter.route("/join").all(publicOnlyMiddleware).get(getJoin).post(postJoin);
 rootRouter
-  .route("/login")
+  .route("/join")
   .all(publicOnlyMiddleware)
-  .get(getLogin)
-  .post(postLogin);
+  .get(() => {})
+  .post(postJoin);
+rootRouter.route("/login");
+rootRouter.all(publicOnlyMiddleware);
+rootRouter.post(postLogin);
 rootRouter.get("/search", search);
 
 export default rootRouter;

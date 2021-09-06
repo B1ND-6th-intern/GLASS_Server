@@ -9,7 +9,9 @@ export const protectorMiddleware = (req, res, next) => {
   if (req.session.loggedIn) {
     next();
   } else {
-    return res.redirect("/login");
+    res.status(400).json({
+      error: "go to login",
+    });
   }
 };
 
@@ -17,6 +19,8 @@ export const publicOnlyMiddleware = (req, res, next) => {
   if (!req.session.loggedIn) {
     next();
   } else {
-    return res.redirect("/");
+    res.status(400).json({
+      error: "go to home",
+    });
   }
 };
