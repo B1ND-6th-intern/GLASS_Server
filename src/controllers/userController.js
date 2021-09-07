@@ -56,7 +56,7 @@ export const postJoin = async (req, res) => {
     });
     return res.status(200).json({
       status: 200,
-      message: "회원가입 성공. 이메일을 인증번호를 확인해 주세요.",
+      message: "회원가입 성공. 이메일의 인증번호를 확인해 주세요.",
       // succeeded register!
     });
   } catch (error) {
@@ -70,7 +70,7 @@ export const postJoin = async (req, res) => {
 
 export const getEmailAuthorization = async (req, res) => {
   if (joinedUser === null || joinedUser.isValid === true) {
-    res.status(400).json({
+    return res.status(400).json({
       status: 400,
       error: "이미 인증된 계정이거나 비정상적인 접근입니다.",
       // It is an already authenticated account or abnormal access.
@@ -79,7 +79,7 @@ export const getEmailAuthorization = async (req, res) => {
   const authorization = await Authorization.findOne({
     authUser: joinedUser._id,
   });
-  if (authorization.sendCount >= 5) {
+  if (authorization.sendCount >= 6) {
     const sendCount = authorization.sendCount;
     await Authorization.findByIdAndDelete(authorization._id);
     await User.findByIdAndDelete(joinedUser._id);
@@ -87,10 +87,25 @@ export const getEmailAuthorization = async (req, res) => {
     return res.status(400).json({
       sendCount: sendCount,
       status: 400,
-      error: "이메일 인증 번호를 5번 전송했습니다. 다시 회원가입 해주세요.",
+      error:
+        "이미 이메일 인증 번호를 5번 전송했습니다. 다시 회원가입 해주세요.",
       // The email verification number is incorrect 5 times. You have to sign up again.
     });
   }
+
+  if (authorization.sendCount === 5) {
+    authorization.sendCount += 1;
+    authorization.save();
+    return res.status(200).json({
+      sendCount: authorization.sendCount,
+      status: 200,
+      message: `메일 발송에 성공하였습니다. 메일 재발송 기회가 ${
+        5 - authorization.sendCount
+      }번 남았습니다.`,
+      // Succeeded to send mail.
+    });
+  }
+
   const sendName = "glassfromb1nd@gmail.com";
   const password = process.env.EMAIL_PASSWORD;
   const recName = joinedUser.email;
@@ -110,12 +125,15 @@ export const getEmailAuthorization = async (req, res) => {
     from: "glassfromb1nd@gmail.com",
     to: recName,
     subject: "GLASS 회원가입 인증번호",
-    text: `안녕하세요!
-    회원가입을 위해 확인 코드를 웹 페이지에 입력해주세요.
-      
-    확인 코드: ${confirmationCode}
+    text: `
+안녕하세요 :) 저희 GLASS를 이용해주셔서 감사합니다.
+회원가입을 위해 확인 코드를 웹 페이지에 입력해주세요.
 
-    GLASS 서버 팀`,
+확인 코드: ${confirmationCode}
+
+만약 인증이 되지 않는다면 인증 메일 재전송을 누르시거나 glassfromb1nd@gmail.com으로 문의해주시기 바랍니다.
+
+- B1ND GLASS 팀 -`,
   };
 
   transporter.sendMail(mailOptions, (error, info) => {
@@ -128,22 +146,39 @@ export const getEmailAuthorization = async (req, res) => {
       });
     }
   });
-
   authorization.sendCount += 1;
   authorization.save();
+
   return res.status(200).json({
     sendCount: authorization.sendCount,
     status: 200,
-    message: "메일 발송에 성공하였습니다.",
+    message: `메일 발송에 성공하였습니다. 메일 재발송 기회가 ${
+      5 - authorization.sendCount
+    }번 남았습니다.`,
     // Succeeded to send mail.
   });
 };
 
 export const postEmailAuthorization = async (req, res) => {
+  if (joinedUser === null || joinedUser.isValid === true) {
+    return res.status(400).json({
+      status: 400,
+      error: "이미 인증된 계정이거나 비정상적인 접근입니다.",
+      // It is an already authenticated account or abnormal access.
+    });
+  }
+  if (!joinedUser.confirmationCode) {
+    return res.status(400).json({
+      status: 400,
+      error:
+        "이전에 메일이 발송되지 않았습니다. 메일 발송을 다시 시도해주세요.",
+      // It is an already authenticated account or abnormal access.
+    });
+  }
   const authorization = await Authorization.findOne({
     authUser: joinedUser._id,
   });
-  if (authorization.failCount >= 5) {
+  if (authorization.failCount >= 4) {
     const failedCount = authorization.failCount;
     await Authorization.findByIdAndDelete(authorization._id);
     await User.findByIdAndDelete(joinedUser._id);
@@ -161,11 +196,12 @@ export const postEmailAuthorization = async (req, res) => {
   if (Number(joinedUser.confirmationCode) !== Number(confirmation)) {
     authorization.failCount += 1;
     authorization.save();
-    console.log("failed!!");
     return res.status(400).json({
       failedCount: authorization.failCount,
       status: 400,
-      error: "이메일 인증 번호가 옳지 않습니다. 다시 입력해주세요.",
+      error: `이메일 인증 번호가 옳지 않습니다. 재인증 기회가 ${
+        5 - authorization.failCount
+      }번 남았습니다. 다시 입력해주세요.`,
       // The email verification number is incorrect. Please re-enter.
     });
   }
@@ -209,9 +245,8 @@ export const postLogin = async (req, res) => {
   req.session.user = user;
   return res.status(200).json({
     status: 200,
-    message: "",
+    message: "로그인 성공!",
     // Succeed log-in!
-    //로그인 성공!
   });
 };
 
