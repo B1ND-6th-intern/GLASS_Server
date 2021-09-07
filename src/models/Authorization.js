@@ -1,7 +1,8 @@
 import mongoose from "mongoose";
 
 const authorizationSchema = new mongoose.Schema({
-  authCount: { type: Number, default: 0, required: true },
+  failCount: { type: Number, default: 0, required: true },
+  sendCount: { type: Number, default: 0, required: true },
   authUser: { type: mongoose.Types.ObjectId, ref: "User" },
 });
 
