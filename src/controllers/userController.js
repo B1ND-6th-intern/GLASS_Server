@@ -51,7 +51,7 @@ export const postJoin = async (req, res) => {
     });
     await Authorization.create({
       failCount: 0,
-      sendCount: 0,
+      sendCount: 6,
       authUser: joinedUser._id,
     });
     return res.status(200).json({
@@ -79,7 +79,11 @@ export const getEmailAuthorization = async (req, res) => {
   const authorization = await Authorization.findOne({
     authUser: joinedUser._id,
   });
-  if (authorization.sendCount >= 6) {
+
+  authorization.sendCount -= 1;
+  authorization.save();
+
+  if (authorization.sendCount < 0) {
     const sendCount = authorization.sendCount;
     await Authorization.findByIdAndDelete(authorization._id);
     await User.findByIdAndDelete(joinedUser._id);
@@ -90,19 +94,6 @@ export const getEmailAuthorization = async (req, res) => {
       error:
         "이미 이메일 인증 번호를 5번 전송했습니다. 다시 회원가입 해주세요.",
       // The email verification number is incorrect 5 times. You have to sign up again.
-    });
-  }
-
-  if (authorization.sendCount === 5) {
-    authorization.sendCount += 1;
-    authorization.save();
-    return res.status(200).json({
-      sendCount: authorization.sendCount,
-      status: 200,
-      message: `메일 발송에 성공하였습니다. 메일 재발송 기회가 ${
-        5 - authorization.sendCount
-      }번 남았습니다.`,
-      // Succeeded to send mail.
     });
   }
 
@@ -138,6 +129,8 @@ export const getEmailAuthorization = async (req, res) => {
 
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
+      authorization.sendCount += 1;
+      authorization.save();
       console.log(error);
       return res.status(400).json({
         status: 400,
@@ -146,15 +139,11 @@ export const getEmailAuthorization = async (req, res) => {
       });
     }
   });
-  authorization.sendCount += 1;
-  authorization.save();
 
   return res.status(200).json({
     sendCount: authorization.sendCount,
     status: 200,
-    message: `메일 발송에 성공하였습니다. 메일 재발송 기회가 ${
-      5 - authorization.sendCount
-    }번 남았습니다.`,
+    message: `메일 발송에 성공하였습니다. 메일 재발송 기회가 ${authorization.sendCount}번 남았습니다.`,
     // Succeeded to send mail.
   });
 };
