@@ -2,7 +2,6 @@ import User from "../models/User";
 import Authorization from "../models/Authorization";
 import bcrypt from "bcrypt";
 import nodemailer from "nodemailer";
-import { introspectionFromSchema } from "graphql";
 
 let joinedUser = null;
 
