@@ -272,3 +272,39 @@ export const postEditComment = async (req, res) => {
     });
   }
 };
+
+export const deleteComment = async (req, res) => {
+  const { id } = req.params;
+  const {
+    user: { _id },
+  } = req.session;
+  const comment = await Comment.findById(id);
+  if (!comment) {
+    res.status(404).json({
+      status: 404,
+      error: "삭제할 댓글을 찾지 못함",
+    });
+  }
+  if (String(comment.owner) !== String(_id)) {
+    return res.status(403).json({
+      status: 403,
+      error: "권한이 없음",
+    });
+  }
+  const writing = await Writing.findById(comment.writing);
+  try {
+    writing.comments.pull(id);
+    writing.save();
+    await Writing.findByIdAndDelete(id);
+    return res.status(200).json({
+      status: 200,
+      message: "삭제 성공!",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({
+      status: 400,
+      error: "삭제 실패",
+    });
+  }
+};
