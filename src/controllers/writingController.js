@@ -1,4 +1,6 @@
 import Writing from "../models/Writing";
+import User from "../models/User";
+import Comment from "../models/Comment";
 
 export const home = async (req, res) => {
   const writings = await Writing.find({}).sort({ createdAt: "desc" });
@@ -40,6 +42,9 @@ export const getEdit = async (req, res) => {
 
 export const postEdit = async (req, res) => {
   const { id } = req.params;
+  const {
+    user: { _id },
+  } = req.session;
   const { title, text, categories } = req.body;
   const writing = await Writing.exists({ _id: id });
   if (!writing) {
@@ -48,15 +53,44 @@ export const postEdit = async (req, res) => {
       error: "글을 찾을 수 없습니다.",
     });
   }
-  await Writing.findByIdAndUpdate(id, {
-    title,
-    text,
-    categories: Writing.formatCategories(categories),
-  });
-  return res.status(200).json({
-    status: 200,
-    id,
-  });
+  if (String(writing.owner) !== String(_id)) {
+    return res.status(403).json({
+      status: 403,
+      error: "권한이 없음",
+    });
+  }
+  const user = await User.findById(_id);
+  if (!user) {
+    return res.status(404).json({
+      status: 404,
+      error: "사용자를 찾을 수 없습니다.",
+    });
+  }
+  try {
+    user.writings.pull(id);
+    user.save();
+    const newWriting = await Writing.findByIdAndUpdate(
+      id,
+      {
+        title,
+        text,
+        categories: Writing.formatCategories(categories),
+      },
+      { new: true }
+    );
+    user.writings.push(newWriting._id);
+    user.save();
+    return res.status(200).json({
+      status: 200,
+      id,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.stauts(400).json({
+      status: 400,
+      error: "오류",
+    });
+  }
 };
 
 export const postUpload = async (req, res) => {
@@ -89,11 +123,44 @@ export const postUpload = async (req, res) => {
 
 export const deleteWriting = async (req, res) => {
   const { id } = req.params;
-  await Writing.findByIdAndDelete(id);
-  return res.status(200).json({
-    status: 200,
-    message: "삭제 성공!",
-  });
+  const {
+    user: { _id },
+  } = req.session;
+  const writing = await Writing.findById(id);
+  if (!writing) {
+    res.status(404).json({
+      status: 404,
+      error: "삭제할 게시물을 찾지 못함",
+    });
+  }
+  if (String(writing.owner) !== String(_id)) {
+    return res.status(403).json({
+      status: 403,
+      error: "권한이 없음",
+    });
+  }
+  const user = await User.findById(_id);
+  if (!user) {
+    res.status(404).json({
+      status: 404,
+      error: "사용자를 찾지 못함",
+    });
+  }
+  try {
+    user.writings.pull(id);
+    user.save();
+    await Writing.findByIdAndDelete(id);
+    return res.status(200).json({
+      status: 200,
+      message: "삭제 성공!",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({
+      status: 400,
+      error: "삭제 실패",
+    });
+  }
 };
 
 export const search = async (req, res) => {
@@ -110,4 +177,87 @@ export const search = async (req, res) => {
     status: 200,
     writings,
   });
+};
+
+export const postUploadComment = async (req, res) => {
+  const {
+    user: { _id: userId },
+  } = req.session;
+  const {
+    text,
+    writing: { _id },
+  } = req.body;
+  const writing = await Writing.findById(_id);
+  if (!writing) {
+    return res.status(404).json({
+      status: 404,
+      error: "댓글을 달 게시물을 찾지 못했습니다.",
+    });
+  }
+  try {
+    const comment = await Comment.create({
+      text,
+      owner: userId,
+    });
+    writing.comments.push(comment._id);
+    writing.save();
+    return res.status(200).json({
+      status: 200,
+      message: "댓글 작성 성공!",
+    });
+  } catch (error) {
+    console.log("postComment", error);
+    return res.status(400).json({
+      status: 400,
+      error: "댓글 작성 실패",
+    });
+  }
+};
+
+export const getEditComment = async (req, res) => {
+  const { id } = req.params;
+  const comment = await Comment.findById(id);
+  if (!comment) {
+    return res.status(404).json({
+      status: 404,
+      error: "댓글을 찾을 수 없습니다.",
+    });
+  }
+  return res.status(200).json({
+    status: 200,
+    comment,
+  });
+};
+
+export const postEditComment = async (req, res) => {
+  const {
+    user: { _id: userId },
+  } = req.session;
+  const { id } = req.params;
+  const {
+    text,
+    writing: { _id },
+  } = req.body;
+  const comment = await Comment.exists({ _id: id });
+  if (!comment) {
+    return res.status(404).json({
+      status: 404,
+      error: "글을 찾을 수 없습니다.",
+    });
+  }
+  if (String(comment.owner) !== String(userId)) {
+    return res.status(403).json({
+      status: 403,
+      error: "권한이 없음",
+    });
+  }
+  try {
+    const newComment = await Comment.findByIdAndUpdate(
+      id,
+      {
+        text,
+      },
+      { new: true }
+    );
+  } catch (error) {}
 };
