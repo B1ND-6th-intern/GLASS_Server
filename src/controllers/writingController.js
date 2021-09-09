@@ -85,10 +85,10 @@ export const postEdit = async (req, res) => {
       id,
     });
   } catch (error) {
-    console.log(error);
+    console.log("postEdit", error);
     return res.stauts(400).json({
       status: 400,
-      error: "오류",
+      error: "게시글을 편집하지 못했습니다.",
     });
   }
 };
@@ -113,7 +113,7 @@ export const postUpload = async (req, res) => {
       message: "업로드 성공!",
     });
   } catch (error) {
-    console.log(error);
+    console.log("postUpload", error);
     return res.status(400).json({
       status: 400,
       error: "업로드 실패",
@@ -198,6 +198,7 @@ export const postUploadComment = async (req, res) => {
     const comment = await Comment.create({
       text,
       owner: userId,
+      writing,
     });
     writing.comments.push(comment._id);
     writing.save();
@@ -234,10 +235,7 @@ export const postEditComment = async (req, res) => {
     user: { _id: userId },
   } = req.session;
   const { id } = req.params;
-  const {
-    text,
-    writing: { _id },
-  } = req.body;
+  const { text, writing } = req.body;
   const comment = await Comment.exists({ _id: id });
   if (!comment) {
     return res.status(404).json({
@@ -252,6 +250,8 @@ export const postEditComment = async (req, res) => {
     });
   }
   try {
+    writing.comments.pull(id);
+    writing.save();
     const newComment = await Comment.findByIdAndUpdate(
       id,
       {
@@ -259,5 +259,16 @@ export const postEditComment = async (req, res) => {
       },
       { new: true }
     );
-  } catch (error) {}
+    writing.comments.push(newComment._id);
+    writing.save();
+    return res.status(200).json({
+      status: 200,
+      message: "댓글 편집을 완료했습니다.",
+    });
+  } catch (error) {
+    return res.status(400).json({
+      status: 400,
+      error: "댓글을 편집하지 못했습니다.",
+    });
+  }
 };
