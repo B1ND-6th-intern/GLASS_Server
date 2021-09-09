@@ -100,6 +100,8 @@ export const getEmailAuthorization = async (req, res) => {
   const password = process.env.EMAIL_PASSWORD;
   const recName = joinedUser.email;
   const confirmationCode = Math.floor(Math.random() * 8999) + 1000;
+  const MailerConfilm = false;
+  joinedUser.MailerConfilm = MailerConfilm;
   joinedUser.confirmationCode = confirmationCode;
 
   const transporter = nodemailer.createTransport({
@@ -131,6 +133,7 @@ export const getEmailAuthorization = async (req, res) => {
       authorization.sendCount += 1;
       authorization.save();
       console.log(error);
+
       return res.status(400).json({
         status: 400,
         error: "메일 발송에 실패하였습니다.",
@@ -139,6 +142,7 @@ export const getEmailAuthorization = async (req, res) => {
     }
   });
 
+  joinedUser.MailerConfilm = true;
   return res.status(200).json({
     sendCount: authorization.sendCount,
     status: 200,
@@ -148,6 +152,18 @@ export const getEmailAuthorization = async (req, res) => {
 };
 
 export const postEmailAuthorization = async (req, res) => {
+  const { timeover } = req.body;
+  console.log(req.body);
+  if (timeover === true) {
+    joinedUser.confirmationCode = null;
+    console.log(1);
+    return res.status(400).json({
+      status: 400,
+      error:
+        "인증시간을 초과했습니다. '재전송'을 눌러 다시 인증해주시기 바랍니다.",
+    });
+  }
+
   if (joinedUser === null || joinedUser.isValid === true) {
     return res.status(400).json({
       status: 400,
@@ -155,7 +171,7 @@ export const postEmailAuthorization = async (req, res) => {
       // It is an already authenticated account or abnormal access.
     });
   }
-  if (!joinedUser.confirmationCode) {
+  if (!joinedUser.confirmationCode && joinedUser.MailerConfilm === false) {
     return res.status(400).json({
       status: 400,
       error:
@@ -163,6 +179,7 @@ export const postEmailAuthorization = async (req, res) => {
       // It is an already authenticated account or abnormal access.
     });
   }
+
   const authorization = await Authorization.findOne({
     authUser: joinedUser._id,
   });
@@ -178,6 +195,7 @@ export const postEmailAuthorization = async (req, res) => {
       // The email verification number is incorrect 5 times. You have to sign up again.
     });
   }
+
   const {
     body: { confirmation },
   } = req;
