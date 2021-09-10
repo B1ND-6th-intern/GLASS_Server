@@ -2,6 +2,7 @@ import User from "../models/User";
 import Authorization from "../models/Authorization";
 import bcrypt from "bcrypt";
 import nodemailer from "nodemailer";
+import jwt from "jsonwebtoken";
 
 let joinedUser = null;
 
@@ -16,7 +17,7 @@ export const postJoin = async (req, res) => {
     name,
     isAgree,
   } = req.body;
-  if (isAgree !== true) {
+  if (isAgree === false) {
     return res.status(400).json({
       status: 400,
       error: "개인정보 수집에 동의해주세요.",
@@ -59,6 +60,7 @@ export const postJoin = async (req, res) => {
       // succeeded register!
     });
   } catch (error) {
+    console.log(error);
     return res.status(400).json({
       status: 400,
       error: "회원가입에 실패하였습니다. 다시 시도해주십시오.",
@@ -153,10 +155,8 @@ export const getEmailAuthorization = async (req, res) => {
 
 export const postEmailAuthorization = async (req, res) => {
   const { timeover } = req.body;
-  console.log(req.body);
   if (timeover === true) {
     joinedUser.confirmationCode = null;
-    console.log(1);
     return res.status(400).json({
       status: 400,
       error:
@@ -249,11 +249,32 @@ export const postLogin = async (req, res) => {
   }
   req.session.loggedIn = true;
   req.session.user = user;
-  return res.status(200).json({
-    status: 200,
-    message: "로그인 성공!",
-    // Succeed log-in!
-  });
+
+  if (req.session.loggedIn) {
+    const user = User.findOne({ where: { email: email } });
+    const token = jwt.sign(
+      {
+        email: user.email,
+        password: user.password,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "15m", // 유효기간 15분 => 15분 이후 토큰이 재발급 됨
+        issuer: "nodebird",
+      }
+    );
+
+    return res.status(200).json({
+      status: 200,
+      message: "로그인 성공!",
+      token, // 발행된 jwt 토큰
+    });
+  } else {
+    return res.status(404).json({
+      status: 404,
+      message: "사용자 데이터가 유효하지 않습니다.",
+    });
+  }
 };
 
 export const logout = (req, res) => {
