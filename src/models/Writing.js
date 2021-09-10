@@ -10,6 +10,7 @@ const writingSchema = new mongoose.Schema({
   },
   like: { type: Number, default: 0, required: true },
   owner: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "User" },
+  comments: [{ type: mongoose.Types.ObjectId, ref: "Comment" }],
 });
 
 writingSchema.static("formatCategories", (categories) => {
