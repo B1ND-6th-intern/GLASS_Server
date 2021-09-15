@@ -5,6 +5,7 @@ import {
   getEdit,
   postEdit,
   deleteWriting,
+  registerWritingLike,
 } from "../controllers/writingController";
 import { protectorMiddleware } from "../middlewares";
 

@@ -310,5 +310,15 @@ export const deleteComment = async (req, res) => {
 };
 
 export const registerCommentLike = async (req, res) => {
-  return res.sendStatus(200);
+  return res.status(200).json({
+    status: 200,
+    message: "succeed",
+  });
+};
+
+export const registerWritingLike = async (req, res) => {
+  return res.status(200).json({
+    status: 200,
+    message: "succeed",
+  });
 };
