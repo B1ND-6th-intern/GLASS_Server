@@ -21,6 +21,7 @@ writingRouter.get(
   protectorMiddleware,
   deleteWriting
 );
+writingRouter.get("/:id([0-9a-f]{24})/like", registerWritingLike);
 writingRouter.post("/upload", protectorMiddleware, postUpload);
 
 export default writingRouter;

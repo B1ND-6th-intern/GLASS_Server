@@ -6,6 +6,7 @@ import MongoStore from "connect-mongo";
 import rootRouter from "./routers/rootRouter";
 import writingRouter from "./routers/writingRouter";
 import userRouter from "./routers/userRouter";
+import commentRouter from "./routers/commentRouter";
 import { localsMiddleware } from "./middlewares";
 import cors from "cors";
 
@@ -33,5 +34,6 @@ app.use(localsMiddleware);
 app.use("/", rootRouter);
 app.use("/writing", writingRouter);
 app.use("/user", userRouter);
+app.use("/comment", commentRouter);
 
 export default app;

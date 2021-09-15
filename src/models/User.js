@@ -10,6 +10,7 @@ const userSchema = new mongoose.Schema({
   stuNumber: { type: Number, required: true },
   isValid: { type: Boolean, default: false },
   writings: [{ type: mongoose.Types.ObjectId, ref: "Writing" }],
+  comments: [{ type: mongoose.Types.ObjectId, ref: "Comment" }],
 });
 
 userSchema.pre("save", async function () {

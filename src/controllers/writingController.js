@@ -308,3 +308,7 @@ export const deleteComment = async (req, res) => {
     });
   }
 };
+
+export const registerCommentLike = async (req, res) => {
+  return res.sendStatus(200);
+};
