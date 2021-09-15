@@ -11,19 +11,19 @@ import {
 import {
   protectorMiddleware,
   publicOnlyMiddleware,
-  Token,
+  verifyToken,
 } from "../middlewares";
 
 const userRouter = express.Router();
 
-userRouter.post("/login", Token, postLogin);
-userRouter.get("/logout", protectorMiddleware, logout);
-userRouter.post("/edit", protectorMiddleware, postEdit);
-userRouter.post("/change-password", protectorMiddleware, postChangePassword);
+userRouter.post("/login", verifyToken, publicOnlyMiddleware, postLogin);
 userRouter
   .route("/email-auth")
   .get(getEmailAuthorization)
   .post(postEmailAuthorization);
+userRouter.get("/logout", protectorMiddleware, logout);
+userRouter.post("/edit", protectorMiddleware, postEdit);
+userRouter.post("/change-password", protectorMiddleware, postChangePassword);
 userRouter.get(":id", see);
 
 export default userRouter;

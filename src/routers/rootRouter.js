@@ -6,7 +6,7 @@ import { publicOnlyMiddleware } from "../middlewares";
 const rootRouter = express.Router();
 
 rootRouter.get("/", home);
-rootRouter.post("/join", publicOnlyMiddleware, postJoin);
+rootRouter.post("/join", postJoin);
 rootRouter.post("/login", publicOnlyMiddleware, postLogin);
 rootRouter.get("/search", search);
 

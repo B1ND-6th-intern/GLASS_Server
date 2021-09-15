@@ -45,7 +45,7 @@ export const postEdit = async (req, res) => {
   const {
     user: { _id },
   } = req.session;
-  const { title, text, categories } = req.body;
+  const { title, text, hashtag } = req.body;
   const writing = await Writing.exists({ _id: id });
   if (!writing) {
     return res.status(404).json({
@@ -74,7 +74,7 @@ export const postEdit = async (req, res) => {
       {
         title,
         text,
-        categories: Writing.formatCategories(categories),
+        hashtag: Writing.formatCategories(hashtag),
       },
       { new: true }
     );
@@ -97,13 +97,13 @@ export const postUpload = async (req, res) => {
   const {
     user: { _id },
   } = req.session;
-  const { title, text, categories } = req.body;
+  const { title, text, hashtag } = req.body;
   try {
     const newVideo = await Writing.create({
       title,
       text,
       owner: _id,
-      categories: Writing.formatCategories(categories),
+      hashtag: Writing.formatCategories(hashtag),
     });
     const user = await User.findById(_id);
     user.writings.push(newVideo._id);
