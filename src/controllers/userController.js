@@ -24,7 +24,6 @@ export const postJoin = async (req, res) => {
       // Please agree to the collection of personal information.
     });
   }
-  const pageTitle = "Join";
   if (password !== password2) {
     return res.status(400).json({
       status: 400,
@@ -134,6 +133,7 @@ export const getEmailAuthorization = async (req, res) => {
     if (error) {
       authorization.sendCount += 1;
       authorization.save();
+      console.log(1);
       console.log(error);
 
       return res.status(400).json({
@@ -212,7 +212,7 @@ export const postEmailAuthorization = async (req, res) => {
     });
   }
 
-  joinedUser.isValid = true;
+  joinedUser.isValid = true; //
   joinedUser.save();
   joinedUser = null;
   return res.status(200).json({
@@ -224,14 +224,7 @@ export const postEmailAuthorization = async (req, res) => {
 
 export const postLogin = async (req, res) => {
   const { email, password } = req.body;
-  const pageTitle = "Login";
   const user = await User.findOne({ email });
-  if (!user.isValid)
-    return res.status(400).json({
-      status: 400,
-      error: "Email 인증이 되지 않았습니다.",
-      // Email is not verified.
-    });
   if (!user) {
     return res.status(400).json({
       status: 400,
@@ -239,6 +232,12 @@ export const postLogin = async (req, res) => {
       // An account with this email does not exist.
     });
   }
+  if (!user.isValid)
+    return res.status(400).json({
+      status: 400,
+      error: "Email 인증이 되지 않았습니다.",
+      // Email is not verified.
+    });
   const ok = await bcrypt.compare(password, user.password);
   if (!ok) {
     return res.status(400).json({
@@ -247,15 +246,12 @@ export const postLogin = async (req, res) => {
       // The password is incorrect.
     });
   }
-  req.session.loggedIn = true;
-  req.session.user = user;
 
-  if (req.session.loggedIn) {
+  if (user) {
     const user = User.findOne({ where: { email: email } });
     const token = jwt.sign(
       {
         email: user.email,
-        password: user.password,
       },
       process.env.JWT_SECRET,
       {
