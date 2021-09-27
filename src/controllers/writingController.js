@@ -6,6 +6,7 @@ export const home = async (req, res) => {
   const writings = await Writing.find({}).sort({ createdAt: "desc" });
   return res.status(200).json({
     status: 200,
+    message: "메인 불러오기에 성공했습니다.",
     writings,
   });
 };
@@ -21,6 +22,7 @@ export const watch = async (req, res) => {
   }
   return res.status(200).json({
     status: 200,
+    message: "게시글을 찾았습니다.",
     writing,
   });
 };
@@ -36,6 +38,7 @@ export const getEdit = async (req, res) => {
   }
   return res.status(200).json({
     status: 200,
+    message: "편집할 게시글을 찾았습니다.",
     writing,
   });
 };
@@ -82,7 +85,7 @@ export const postEdit = async (req, res) => {
     user.save();
     return res.status(200).json({
       status: 200,
-      id,
+      message: "게시글을 편집하였습니다.",
     });
   } catch (error) {
     console.log("postEdit", error);
