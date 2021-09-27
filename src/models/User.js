@@ -5,12 +5,12 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   name: { type: String, required: true },
-  grade: { type: Number, required: true },
-  classNumber: { type: Number, required: true },
-  stuNumber: { type: Number, required: true },
+  grade: { type: Number },
+  classNumber: { type: Number },
+  stuNumber: { type: Number },
   isValid: { type: Boolean, default: false },
+  permission: { type: Number, required: true }, // 0 학생, 1 학부모, 2 교직원
   writings: [{ type: mongoose.Types.ObjectId, ref: "Writing" }],
-  comments: [{ type: mongoose.Types.ObjectId, ref: "Comment" }],
 });
 
 userSchema.pre("save", async function () {

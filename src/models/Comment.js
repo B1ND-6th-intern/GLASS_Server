@@ -6,10 +6,9 @@ const commentSchema = new mongoose.Schema({
   writing: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
-    ref: "writing",
+    ref: "Writing",
   },
   createdAt: { type: Date, required: true, default: Date.now },
-  like: { type: Number, default: 0, required: true },
 });
 
 const Comment = mongoose.model("Comment", commentSchema);

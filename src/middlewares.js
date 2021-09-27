@@ -14,7 +14,7 @@ export const protectorMiddleware = (req, res, next) => {
   } else {
     res.status(400).json({
       //error: "go to login",
-      error: "로그인 페이지으로 가십시오",
+      error: "로그인 페이지로 가십시오",
     });
   }
 };

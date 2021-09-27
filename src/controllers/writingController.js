@@ -312,16 +312,19 @@ export const deleteComment = async (req, res) => {
   }
 };
 
-export const registerCommentLike = async (req, res) => {
-  return res.status(200).json({
-    status: 200,
-    message: "succeed",
-  });
-};
-
 export const registerWritingLike = async (req, res) => {
+  const { id } = req.params;
+  writing = await Writing.findById(id);
+  if (!writing) {
+    res.status(404).json({
+      status: 404,
+      error: "좋아요를 표시할 게시글을 찾지 못했습니다.",
+    });
+  }
+  writing.like = writing.like + 1;
+  await writing.save();
   return res.status(200).json({
     status: 200,
-    message: "succeed",
+    message: "좋아요 표시에 성공했습니다.",
   });
 };
