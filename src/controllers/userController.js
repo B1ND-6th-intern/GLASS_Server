@@ -7,22 +7,23 @@ import jwt from "jsonwebtoken";
 let joinedUser = null;
 
 export const postJoin = async (req, res) => {
-  const {
-    password,
-    password2,
-    grade,
-    classNumber,
-    stuNumber,
-    email,
-    name,
-    isAgree,
-  } = req.body;
+  const { password, password2, email, name, permission, isAgree } = req.body;
+  let grade, classNumber, stuNumber;
   if (isAgree === false) {
     return res.status(400).json({
       status: 400,
       error: "개인정보 수집에 동의해주세요.",
       // Please agree to the collection of personal information.
     });
+  }
+  if (permission === 0) {
+    grade = req.body.grade;
+    classNumber = req.body.classNumber;
+    stuNumber = req.body.stuNumber;
+  } else {
+    grade = 0;
+    classNumber = 0;
+    stuNumber = 0;
   }
   if (password !== password2) {
     return res.status(400).json({
@@ -47,6 +48,7 @@ export const postJoin = async (req, res) => {
       grade,
       classNumber,
       stuNumber,
+      permission,
     });
     await Authorization.create({
       failCount: 0,
@@ -120,7 +122,7 @@ export const getEmailAuthorization = async (req, res) => {
     subject: "GLASS 회원가입 인증번호",
     text: `
 안녕하세요 :) 저희 GLASS를 이용해주셔서 감사합니다.
-회원가입을 위해 확인 코드를 웹 페이지에 입력해주세요.
+회원가입을 위해 확인 코드를 입력창에 입력해주세요.
 
 확인 코드: ${confirmationCode}
 
@@ -212,7 +214,7 @@ export const postEmailAuthorization = async (req, res) => {
     });
   }
 
-  joinedUser.isValid = true; //
+  joinedUser.isValid = true;
   joinedUser.save();
   joinedUser = null;
   return res.status(200).json({
@@ -288,7 +290,6 @@ export const postEdit = async (req, res) => {
       user: { _id },
     },
     body: { name, email },
-    file,
   } = req;
   const findEmail = await User.findOne({ email });
   if (findEmail !== null) {
