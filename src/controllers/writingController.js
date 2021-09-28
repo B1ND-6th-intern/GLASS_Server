@@ -100,13 +100,13 @@ export const postUpload = async (req, res) => {
   const {
     user: { _id },
   } = req.session;
-  const { title, text, hashtags } = req.body;
+  const { text, hashtags, imgs } = req.body;
   try {
     const newVideo = await Writing.create({
-      title,
       text,
       owner: _id,
       hashtag: Writing.formatHashtags(hashtags),
+      imgs,
     });
     const user = await User.findById(_id);
     user.writings.push(newVideo._id);

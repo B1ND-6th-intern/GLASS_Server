@@ -42,7 +42,6 @@ export const verifyToken = (req, res, next) => {
         error: "토큰 만료",
       });
     }
-
     return res.status(401).json({
       status: 401,
       error: "토큰이 유효하지 않습니다.",
