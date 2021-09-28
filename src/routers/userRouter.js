@@ -8,12 +8,7 @@ import {
   postEmailAuthorization,
   postLogin,
 } from "../controllers/userController";
-import {
-  protectorMiddleware,
-  publicOnlyMiddleware,
-  verifyToken,
-  avatarUpload,
-} from "../middlewares";
+import { verifyToken, avatarUpload } from "../middlewares";
 
 const userRouter = express.Router();
 
@@ -22,14 +17,9 @@ userRouter
   .route("/email-auth")
   .get(getEmailAuthorization)
   .post(postEmailAuthorization);
-userRouter.get("/logout", protectorMiddleware, logout);
-userRouter.post(
-  "/edit",
-  protectorMiddleware,
-  avatarUpload.single("avatar"),
-  postEdit
-);
-userRouter.post("/change-password", protectorMiddleware, postChangePassword);
+userRouter.get("/logout", logout);
+userRouter.post("/edit", avatarUpload.single("avatar"), postEdit);
+userRouter.post("/change-password", postChangePassword);
 userRouter.get(":id", see);
 
 export default userRouter;

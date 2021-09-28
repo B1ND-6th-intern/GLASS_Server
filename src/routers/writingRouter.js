@@ -7,22 +7,13 @@ import {
   deleteWriting,
   registerWritingLike,
 } from "../controllers/writingController";
-import { protectorMiddleware } from "../middlewares";
 
 const writingRouter = express.Router();
 
 writingRouter.get("/:id([0-9a-f]{24})", watch);
-writingRouter
-  .route("/:id([0-9a-f]{24})/edit")
-  .all(protectorMiddleware)
-  .get(getEdit)
-  .post(postEdit);
-writingRouter.get(
-  "/:id([0-9a-f]{24})/delete",
-  protectorMiddleware,
-  deleteWriting
-);
+writingRouter.route("/:id([0-9a-f]{24})/edit").get(getEdit).post(postEdit);
+writingRouter.get("/:id([0-9a-f]{24})/delete", deleteWriting);
 writingRouter.get("/:id([0-9a-f]{24})/like", registerWritingLike);
-writingRouter.post("/upload", protectorMiddleware, postUpload);
+writingRouter.post("/upload", postUpload);
 
 export default writingRouter;

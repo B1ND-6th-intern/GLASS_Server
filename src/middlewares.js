@@ -8,30 +8,6 @@ export const localsMiddleware = (req, res, next) => {
   next();
 };
 
-export const protectorMiddleware = (req, res, next) => {
-  const searchtoken = req.headers["x-access-token"];
-  if (searchtoken) {
-    next();
-  } else {
-    res.status(400).json({
-      //error: "go to login",
-      error: "로그인 페이지로 가십시오",
-    });
-  }
-};
-
-export const publicOnlyMiddleware = (req, res, next) => {
-  const searchtoken = req.headers["x-access-token"];
-  if (!searchtoken) {
-    next();
-  } else {
-    res.status(400).json({
-      //error: "go to home",
-      error: "홈 페이지로 가십시오",
-    });
-  }
-};
-
 export const verifyToken = (req, res, next) => {
   try {
     req.decoded = jwt.verify(req.headers.authorization, process.env.JWT_SECRET);
