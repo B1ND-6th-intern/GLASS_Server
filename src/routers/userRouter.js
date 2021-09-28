@@ -12,6 +12,7 @@ import {
   protectorMiddleware,
   publicOnlyMiddleware,
   verifyToken,
+  avatarUpload,
 } from "../middlewares";
 
 const userRouter = express.Router();
@@ -22,7 +23,12 @@ userRouter
   .get(getEmailAuthorization)
   .post(postEmailAuthorization);
 userRouter.get("/logout", protectorMiddleware, logout);
-userRouter.post("/edit", protectorMiddleware, postEdit);
+userRouter.post(
+  "/edit",
+  protectorMiddleware,
+  avatarUpload.single("avatar"),
+  postEdit
+);
 userRouter.post("/change-password", protectorMiddleware, postChangePassword);
 userRouter.get(":id", see);
 
