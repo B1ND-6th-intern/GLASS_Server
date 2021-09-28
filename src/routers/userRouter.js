@@ -12,7 +12,7 @@ import { verifyToken, avatarUpload } from "../middlewares";
 
 const userRouter = express.Router();
 
-userRouter.post("/login", verifyToken, publicOnlyMiddleware, postLogin);
+userRouter.post("/login", verifyToken, postLogin);
 userRouter
   .route("/email-auth")
   .get(getEmailAuthorization)
