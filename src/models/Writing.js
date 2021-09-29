@@ -11,7 +11,10 @@ const writingSchema = new mongoose.Schema({
 });
 
 writingSchema.static("formatHashtags", (hashtags) => {
-  return hashtags.map((word) => (word.startsWith("#") ? word : `#${word}`));
+  return hashtags
+    .split(",")
+    .map((word) => (word.startsWith("#") ? word : `#${word}`))
+    .join("");
 });
 
 const Writing = mongoose.model("Writing", writingSchema);

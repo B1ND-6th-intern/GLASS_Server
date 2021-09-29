@@ -62,6 +62,7 @@ export const postJoin = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
+    joinedUser = null;
     return res.status(400).json({
       status: 400,
       error: "회원가입에 실패하였습니다. 다시 시도해주십시오.",
@@ -135,7 +136,6 @@ export const getEmailAuthorization = async (req, res) => {
     if (error) {
       authorization.sendCount += 1;
       authorization.save();
-      console.log(1);
       console.log(error);
 
       return res.status(400).json({
@@ -189,7 +189,8 @@ export const postEmailAuthorization = async (req, res) => {
     const failedCount = authorization.failCount;
     await Authorization.findByIdAndDelete(authorization._id);
     await User.findByIdAndDelete(joinedUser._id);
-    joinedUser = null;
+    console.log(authorization.failCount);
+    console.log(joinedUser);
     return res.status(400).json({
       failedCount: failedCount,
       status: 400,
@@ -203,6 +204,7 @@ export const postEmailAuthorization = async (req, res) => {
   } = req;
   if (Number(joinedUser.confirmationCode) !== Number(confirmation)) {
     authorization.failCount += 1;
+    console.log(authorization.failCount);
     authorization.save();
     return res.status(400).json({
       failedCount: authorization.failCount,
