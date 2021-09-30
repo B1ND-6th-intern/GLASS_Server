@@ -236,12 +236,13 @@ export const postLogin = async (req, res) => {
       // An account with this email does not exist.
     });
   }
-  if (!user.isValid)
+  if (!user.isValid) {
     return res.status(400).json({
       status: 400,
       error: "Email 인증이 되지 않았습니다.",
       // Email is not verified.
     });
+  }
   const ok = await bcrypt.compare(password, user.password);
   if (!ok) {
     return res.status(400).json({
@@ -250,31 +251,22 @@ export const postLogin = async (req, res) => {
       // The password is incorrect.
     });
   }
-
-  if (user) {
-    const user = User.findOne({ where: { email: email } });
-    const token = jwt.sign(
-      {
-        email: user.email,
-      },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: "15m", // 유효기간 15분 => 15분 이후 토큰이 재발급 됨
-        issuer: "nodebird",
-      }
-    );
-
-    return res.status(200).json({
-      status: 200,
-      message: "로그인 성공!",
-      token, // 발행된 jwt 토큰
-    });
-  } else {
-    return res.status(404).json({
-      status: 404,
-      message: "사용자 데이터가 유효하지 않습니다.",
-    });
-  }
+  const token = jwt.sign(
+    {
+      email: user.email,
+    },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: "15m", // 유효기간 15분 => 15분 이후 토큰이 재발급 됨
+      issuer: "nodebird",
+    }
+  );
+  req.session.user = user;
+  return res.status(200).json({
+    status: 200,
+    message: "로그인 성공!",
+    token, // 발행된 jwt 토큰
+  });
 };
 
 export const logout = (req, res) => {
