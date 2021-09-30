@@ -105,7 +105,7 @@ export const postUpload = async (req, res) => {
     const newVideo = await Writing.create({
       text,
       owner: _id,
-      hashtag: Writing.formatHashtags(hashtags),
+      hashtags: Writing.formatHashtags(hashtags),
       imgs,
     });
     const user = await User.findById(_id);
