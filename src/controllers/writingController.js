@@ -97,10 +97,11 @@ export const postEdit = async (req, res) => {
 };
 
 export const postUpload = async (req, res) => {
+  console.log(req.session);
+  console.log(req.user);
   const {
     user: { _id },
-  } = req.session;
-  //console.log(req.session);
+  } = req.user._id;
   const { text, hashtags, imgs } = req.body;
   try {
     const newVideo = await Writing.create({

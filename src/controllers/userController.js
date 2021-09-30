@@ -252,6 +252,7 @@ export const postLogin = async (req, res) => {
   const token = jwt.sign(
     {
       email: user.email,
+      _id: user._id,
     },
     process.env.JWT_SECRET,
     {
@@ -260,6 +261,7 @@ export const postLogin = async (req, res) => {
     }
   );
   req.session.user = user;
+  console.log(req.session.user);
   return res.status(200).json({
     status: 200,
     message: "로그인 성공!",

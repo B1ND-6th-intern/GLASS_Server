@@ -8,11 +8,11 @@ import {
   postEmailAuthorization,
   postLogin,
 } from "../controllers/userController";
-import { verifyToken, avatarUpload } from "../middlewares";
+import { authenticateAccessToken, avatarUpload } from "../middlewares";
 
 const userRouter = express.Router();
 
-userRouter.post("/login", verifyToken, postLogin);
+userRouter.post("/login", authenticateAccessToken, postLogin);
 userRouter
   .route("/email-auth")
   .get(getEmailAuthorization)
