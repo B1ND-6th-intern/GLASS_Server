@@ -8,22 +8,25 @@ export const localsMiddleware = (req, res, next) => {
   next();
 };
 
-export const verifyToken = (req, res, next) => {
-  try {
-    req.decoded = jwt.verify(req.headers.authorization, process.env.JWT_SECRET);
-    return next();
-  } catch (err) {
-    if (err.name === "TokenExpiredError") {
-      return res.status(419).json({
-        status: 419,
-        error: "토큰 만료",
-      });
-    }
-    return res.status(401).json({
-      status: 401,
-      error: "토큰이 유효하지 않습니다.",
-    });
+// access token의 유효성 검사
+const authenticateAccessToken = (req, res, next) => {
+  let authHeader = req.headers["authorization"];
+  let token = authHeader && authHeader.split(" ")[1];
+
+  if (!token) {
+    console.log("wrong token format or token is not sended");
+    return res.sendStatus(400);
   }
+
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (error, user) => {
+    if (error) {
+      console.log(error);
+      return res.sendStatus(403);
+    }
+
+    req.user = user;
+    next();
+  });
 };
 
 export const avatarUpload = multer({
