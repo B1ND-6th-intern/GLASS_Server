@@ -185,7 +185,7 @@ export const postEmailAuthorization = async (req, res) => {
   const authorization = await Authorization.findOne({
     authUser: joinedUser._id,
   });
-  if (authorization.failCount >= 4) {
+  if (authorization.failCount >= 5) {
     const failedCount = authorization.failCount;
     await Authorization.findByIdAndDelete(authorization._id);
     await User.findByIdAndDelete(joinedUser._id);

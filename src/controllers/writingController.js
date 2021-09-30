@@ -100,6 +100,7 @@ export const postUpload = async (req, res) => {
   const {
     user: { _id },
   } = req.session;
+  //console.log(req.session);
   const { text, hashtags, imgs } = req.body;
   try {
     const newVideo = await Writing.create({
@@ -109,8 +110,8 @@ export const postUpload = async (req, res) => {
       imgs,
     });
     const user = await User.findById(_id);
-    user.writings.push(newVideo._id);
-    user.save();
+    await user.writings.push(newVideo._id);
+    await user.save();
     return res.status(200).json({
       status: 200,
       message: "업로드 성공!",
