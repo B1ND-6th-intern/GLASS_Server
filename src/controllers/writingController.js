@@ -126,6 +126,11 @@ export const postUpload = async (req, res) => {
   }
 };
 
+export const postUploadImgs = (req, res) => {
+  console.log(req.body);
+  return res.sendStatus(200);
+};
+
 export const deleteWriting = async (req, res) => {
   const { id } = req.params;
   const {

@@ -30,5 +30,8 @@ export const authenticateAccessToken = (req, res, next) => {
 
 export const avatarUpload = multer({
   dest: "uploads/avatars/",
-  limits: { fileSize: 3000000 },
+});
+
+export const imgsUpload = multer({
+  dest: "uploads/imgs/",
 });
