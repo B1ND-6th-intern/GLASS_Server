@@ -189,8 +189,6 @@ export const postEmailAuthorization = async (req, res) => {
     const failedCount = authorization.failCount;
     await Authorization.findByIdAndDelete(authorization._id);
     await User.findByIdAndDelete(joinedUser._id);
-    console.log(authorization.failCount);
-    console.log(joinedUser);
     return res.status(400).json({
       failedCount: failedCount,
       status: 400,
