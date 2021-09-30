@@ -9,7 +9,7 @@ export const localsMiddleware = (req, res, next) => {
 };
 
 // access token의 유효성 검사
-const authenticateAccessToken = (req, res, next) => {
+export const authenticateAccessToken = (req, res, next) => {
   let authHeader = req.headers["authorization"];
   let token = authHeader && authHeader.split(" ")[1];
 
