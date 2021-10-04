@@ -127,8 +127,11 @@ export const postUpload = async (req, res) => {
 };
 
 export const postUploadImgs = (req, res) => {
-  console.log(req.body);
-  return res.sendStatus(200);
+  console.log(req.files);
+  return res.status(200).json({
+    status: 200,
+    message: "이미지를 업로드했습니다.",
+  });
 };
 
 export const deleteWriting = async (req, res) => {
