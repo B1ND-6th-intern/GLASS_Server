@@ -225,6 +225,7 @@ export const postEmailAuthorization = async (req, res) => {
 };
 
 export const postLogin = async (req, res) => {
+  console.log(req.user);
   const { email, password } = req.body;
   const user = await User.findOne({ email });
   if (!user) {
