@@ -8,7 +8,7 @@ import {
   postEmailAuthorization,
   postLogin,
 } from "../controllers/userController";
-import { authenticateAccessToken, avatarUpload } from "../middlewares";
+import { avatarUpload, authenticateAccessToken } from "../middlewares";
 
 const userRouter = express.Router();
 
@@ -19,7 +19,11 @@ userRouter
   .post(postEmailAuthorization);
 userRouter.get("/logout", logout);
 userRouter.post("/edit", avatarUpload.single("avatar"), postEdit);
-userRouter.post("/change-password", postChangePassword);
+userRouter.post(
+  "/change-password",
+  authenticateAccessToken,
+  postChangePassword
+);
 userRouter.get(":id", see);
 
 export default userRouter;
