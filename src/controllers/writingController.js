@@ -130,7 +130,7 @@ export const postUploadImgs = (req, res) => {
   console.log(req.files);
   let urlArr = new Array();
   for (let i = 0; i < req.files.length; i++) {
-    urlArr.push(`/img/${req.files[i].filename}`);
+    urlArr.push(`/imgs/${req.files[i].filename}`);
     console.log(urlArr[i]);
   }
   let jsonUrl = JSON.stringify(urlArr);

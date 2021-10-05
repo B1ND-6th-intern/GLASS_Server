@@ -17,7 +17,6 @@ writingRouter.route("/:id([0-9a-f]{24})/edit").get(getEdit).post(postEdit);
 writingRouter.get("/:id([0-9a-f]{24})/delete", deleteWriting);
 writingRouter.get("/:id([0-9a-f]{24})/like", registerWritingLike);
 writingRouter.post("/upload", postUpload);
-// writingRouter.post("/upload/imgs", imgsUpload.array("img", 10), postUploadImgs);
-writingRouter.post("/upload/imgs", imgsUpload.single("img"), postUploadImgs);
+writingRouter.post("/upload/imgs", imgsUpload.array("img", 10), postUploadImgs);
 
 export default writingRouter;
