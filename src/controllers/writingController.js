@@ -181,22 +181,6 @@ export const deleteWriting = async (req, res) => {
   }
 };
 
-export const search = async (req, res) => {
-  const { keyword } = req.query;
-  let writings = [];
-  if (keyword) {
-    writings = await Writing.find({
-      title: {
-        $regex: new RegExp(keyword, "i"),
-      },
-    });
-  }
-  return res.status(200).json({
-    status: 200,
-    writings,
-  });
-};
-
 export const postUploadComment = async (req, res) => {
   const {
     user: { _id: userId },
