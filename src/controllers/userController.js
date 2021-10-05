@@ -234,13 +234,13 @@ export const postLogin = async (req, res) => {
       // An account with this email does not exist.
     });
   }
-  if (!user.isValid) {
-    return res.status(400).json({
-      status: 400,
-      error: "Email 인증이 되지 않았습니다.",
-      // Email is not verified.
-    });
-  }
+  // if (!user.isValid) {
+  //   return res.status(400).json({
+  //     status: 400,
+  //     error: "Email 인증이 되지 않았습니다.",
+  //     // Email is not verified.
+  //   });
+  // }
   const ok = await bcrypt.compare(password, user.password);
   if (!ok) {
     return res.status(400).json({
@@ -261,8 +261,6 @@ export const postLogin = async (req, res) => {
       issuer: "nodebird",
     }
   );
-  req.session.user = user;
-  console.log(req.session.user);
   return res.status(200).json({
     status: 200,
     message: "로그인 성공!",
@@ -271,7 +269,6 @@ export const postLogin = async (req, res) => {
 };
 
 export const logout = (req, res) => {
-  req.session.destroy();
   return res.status(200).json({
     status: 200,
     message: "로그아웃 성공!",
@@ -281,9 +278,7 @@ export const logout = (req, res) => {
 
 export const postEdit = async (req, res) => {
   const {
-    session: {
-      user: { _id },
-    },
+    user: { _id },
     body: { name, email },
   } = req;
   const findEmail = await User.findOne({ email });
@@ -304,7 +299,7 @@ export const postEdit = async (req, res) => {
     },
     { new: true }
   );
-  req.session.user = updatedUser;
+  req.user = user;
   return res.status(200).json({
     status: 200,
     message: "회원정보 수정 성공",
@@ -314,9 +309,7 @@ export const postEdit = async (req, res) => {
 
 export const postChangePassword = async (req, res) => {
   const {
-    session: {
-      user: { _id },
-    },
+    user: { _id },
     body: { oldPassword, newPassword, newPasswordConfirmation },
   } = req;
   const user = await User.findById(_id);

@@ -11,18 +11,21 @@ export const localsMiddleware = (req, res, next) => {
 export const authenticateAccessToken = (req, res, next) => {
   let authHeader = req.headers["authorization"];
   let token = authHeader && authHeader.split(" ")[1];
-
   if (!token) {
     console.log("wrong token format or token is not sended");
-    return res.sendStatus(400);
+    return res.status(400).json({
+      status: 400,
+      error: "토큰 포맷이 잘못 되었거나 토큰이 보내지지 않았습니다.",
+    });
   }
-
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (error, user) => {
     if (error) {
-      console.log(error);
-      return res.sendStatus(403);
+      console.log("토큰 에러 : " + error);
+      return res.status(403).json({
+        status: 403,
+        error: "토큰 인증 과정에서 오류가 발생했습니다.",
+      });
     }
-
     req.user = user;
     next();
   });
@@ -30,10 +33,8 @@ export const authenticateAccessToken = (req, res, next) => {
 
 export const avatarUpload = multer({
   dest: "uploads/avatars/",
-  limits: { fileSize: 3000000 },
 });
 
 export const imgsUpload = multer({
   dest: "uploads/imgs/",
-  limits: { fileSize: 10000000 },
 });
