@@ -352,3 +352,19 @@ export const see = async (req, res) => {
     user,
   });
 };
+
+export const search = async (req, res) => {
+  const { keyword } = req.query;
+  let users = [];
+  if (keyword) {
+    users = await User.find({
+      name: {
+        $regex: new RegExp(keyword, "i"),
+      },
+    });
+  }
+  return res.status(200).json({
+    status: 200,
+    users,
+  });
+};
