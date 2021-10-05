@@ -127,17 +127,15 @@ export const postUpload = async (req, res) => {
 };
 
 export const postUploadImgs = (req, res) => {
-  console.log(req.files);
   let urlArr = new Array();
   for (let i = 0; i < req.files.length; i++) {
     urlArr.push(`/imgs/${req.files[i].filename}`);
     console.log(urlArr[i]);
   }
-  let jsonUrl = JSON.stringify(urlArr);
   return res.status(200).json({
     status: 200,
     message: "이미지를 업로드했습니다.",
-    jsonUrl,
+    jsonUrl: urlArr,
   });
 };
 
