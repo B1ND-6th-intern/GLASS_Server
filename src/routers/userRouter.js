@@ -6,13 +6,11 @@ import {
   postChangePassword,
   getEmailAuthorization,
   postEmailAuthorization,
-  postLogin,
 } from "../controllers/userController";
 import { avatarUpload, authenticateAccessToken } from "../middlewares";
 
 const userRouter = express.Router();
 
-userRouter.post("/login", postLogin);
 userRouter
   .route("/email-auth")
   .get(getEmailAuthorization)
