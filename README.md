@@ -16,6 +16,15 @@ GET /
 POST /join
 ```
 
+Parameters
+|Name|Type|In|Description|
+|------|---|---|---|
+|email|string|body||
+|password|string|body||
+|password2|string|body|password confirmation|
+|name|string|body|user's name|
+|permission|integer|body|0=student, 1=Parent, 2=Teacher|
+
 <br/>
 
 ### 로그인 (Login)
@@ -24,6 +33,12 @@ POST /join
 POST /login
 ```
 
+Parameters
+|Name|Type|In|Description|
+|------|---|---|---|
+|email|string|body||
+|password|string|body||
+
 <br/>
 
 ### 사용자 이름 검색 (Search)
@@ -31,6 +46,11 @@ POST /login
 ```
 GET /search
 ```
+
+Parameters
+|Name|Type|In|Description|
+|------|---|---|---|
+|keyword|string|query|put in URL|
 
 <br/>
 
