@@ -1,7 +1,6 @@
 import express from "express";
 import {
   postEdit,
-  logout,
   see,
   postChangePassword,
   getEmailAuthorization,
@@ -15,7 +14,6 @@ userRouter
   .route("/email-auth")
   .get(getEmailAuthorization)
   .post(postEmailAuthorization);
-userRouter.get("/logout", logout);
 userRouter.post("/edit", avatarUpload.single("avatar"), postEdit);
 userRouter.post(
   "/change-password",
