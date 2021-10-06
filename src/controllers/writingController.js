@@ -4,6 +4,7 @@ import Comment from "../models/Comment";
 
 export const home = async (req, res) => {
   const writings = await Writing.find({}).sort({ createdAt: "desc" });
+  console.log(writings);
   return res.status(200).json({
     status: 200,
     message: "메인 불러오기에 성공했습니다.",
@@ -96,8 +97,6 @@ export const postEdit = async (req, res) => {
 };
 
 export const postUpload = async (req, res) => {
-  console.log(req.session);
-  console.log(req.user);
   const {
     user: { _id },
   } = req;
