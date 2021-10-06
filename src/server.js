@@ -16,8 +16,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use("/uploads", express.static("uploads"));
 app.use("/", rootRouter);
-app.use("/writing", writingRouter);
-app.use("/user", userRouter);
-app.use("/comment", commentRouter);
+app.use("/writings", writingRouter);
+app.use("/users", userRouter);
+app.use("/comments", commentRouter);
 
 export default app;
