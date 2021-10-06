@@ -225,7 +225,6 @@ export const postEmailAuthorization = async (req, res) => {
 };
 
 export const postLogin = async (req, res) => {
-  console.log(req.user);
   const { email, password } = req.body;
   const user = await User.findOne({ email });
   if (!user) {
@@ -254,12 +253,11 @@ export const postLogin = async (req, res) => {
     {
       _id: user._id,
       email: user.email,
-      _id: user._id,
     },
     process.env.JWT_SECRET,
     {
-      expiresIn: "15m", // 유효기간 15분 => 15분 이후 토큰이 재발급 됨
-      issuer: "nodebird",
+      expiresIn: "50m", // 유효기간 50분 => 50분 이후 토큰이 재발급 됨
+      issuer: "glass",
     }
   );
   return res.status(200).json({
@@ -309,6 +307,8 @@ export const postEdit = async (req, res) => {
 };
 
 export const postChangePassword = async (req, res) => {
+  console.log("I'm in postChangePassword");
+  console.log(req.user);
   const {
     user: { _id },
     body: { oldPassword, newPassword, newPasswordConfirmation },

@@ -12,7 +12,7 @@ import { avatarUpload, authenticateAccessToken } from "../middlewares";
 
 const userRouter = express.Router();
 
-userRouter.post("/login", authenticateAccessToken, postLogin);
+userRouter.post("/login", postLogin);
 userRouter
   .route("/email-auth")
   .get(getEmailAuthorization)

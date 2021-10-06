@@ -2,8 +2,10 @@ import jwt from "jsonwebtoken";
 import multer from "multer";
 
 export const authenticateAccessToken = (req, res, next) => {
+  console.log("I'm in authentication");
   let authHeader = req.headers["authorization"];
-  let token = authHeader && authHeader.split(".")[1];
+  let token = authHeader && authHeader.split(" ")[1];
+  console.log(token);
   if (!token) {
     return res.status(400).json({
       status: 400,
@@ -19,6 +21,7 @@ export const authenticateAccessToken = (req, res, next) => {
       });
     }
     req.user = user;
+    console.log(req.user);
     next();
   });
 };
