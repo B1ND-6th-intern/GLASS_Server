@@ -28,6 +28,12 @@ Parameters
 |password2|string|body|password confirmation|
 |name|string|body|user's name|
 |permission|integer|body|0=student, 1=Parent, 2=Teacher|
+if permission is 0, add this
+|Name|Type|In|Description|
+|------|---|---|---|
+|grade|integer|body||
+|classNumber|integer|body||
+|stuNumber|integer|body||
 
 <br/>
 
