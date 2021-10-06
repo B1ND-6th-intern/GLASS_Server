@@ -2,7 +2,7 @@ import Writing from "../models/Writing";
 import User from "../models/User";
 import Comment from "../models/Comment";
 
-export const home = async (req, res) => {
+export const getPosts = async (req, res) => {
   const writings = await Writing.find({}).sort({ createdAt: "desc" });
   console.log(writings);
   return res.status(200).json({
