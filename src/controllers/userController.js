@@ -267,14 +267,6 @@ export const postLogin = async (req, res) => {
   });
 };
 
-export const logout = (req, res) => {
-  return res.status(200).json({
-    status: 200,
-    message: "로그아웃 성공!",
-    // Succeed log-out!
-  });
-};
-
 export const postEdit = async (req, res) => {
   const {
     user: { _id },
