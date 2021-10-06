@@ -147,14 +147,6 @@ POST /users/email-auth
 
 <br/>
 
-### 유저 로그아웃 (Log out)
-
-```
-GET /users/logout
-```
-
-<br/>
-
 ### 유저 정보 수정 (edit)
 
 ```
