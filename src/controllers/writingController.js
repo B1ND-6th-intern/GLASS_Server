@@ -47,8 +47,8 @@ export const postEdit = async (req, res) => {
   const { id } = req.params;
   const {
     user: { _id },
-  } = req.session;
-  const { title, text, hashtag } = req.body;
+  } = req;
+  const { text, hashtag } = req.body;
   const writing = await Writing.exists({ _id: id });
   if (!writing) {
     return res.status(404).json({
@@ -75,9 +75,8 @@ export const postEdit = async (req, res) => {
     const newWriting = await Writing.findByIdAndUpdate(
       id,
       {
-        title,
         text,
-        hashtag: Writing.formatCategories(hashtag),
+        hashtag: Writing.formatHashtags(hashtag),
       },
       { new: true }
     );

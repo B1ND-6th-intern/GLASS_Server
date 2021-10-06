@@ -234,13 +234,13 @@ export const postLogin = async (req, res) => {
       // An account with this email does not exist.
     });
   }
-  // if (!user.isValid) {
-  //   return res.status(400).json({
-  //     status: 400,
-  //     error: "Email 인증이 되지 않았습니다.",
-  //     // Email is not verified.
-  //   });
-  // }
+  if (!user.isValid) {
+    return res.status(400).json({
+      status: 400,
+      error: "Email 인증이 되지 않았습니다.",
+      // Email is not verified.
+    });
+  }
   const ok = await bcrypt.compare(password, user.password);
   if (!ok) {
     return res.status(400).json({
@@ -249,17 +249,10 @@ export const postLogin = async (req, res) => {
       // The password is incorrect.
     });
   }
-  const token = jwt.sign(
-    {
-      _id: user._id,
-      email: user.email,
-    },
-    process.env.JWT_SECRET,
-    {
-      expiresIn: "50m", // 유효기간 50분 => 50분 이후 토큰이 재발급 됨
-      issuer: "glass",
-    }
-  );
+  const token = jwt.sign(user, process.env.JWT_SECRET, {
+    expiresIn: "50m", // 유효기간 50분 => 50분 이후 토큰이 재발급 됨
+    issuer: "glass",
+  });
   return res.status(200).json({
     status: 200,
     message: "로그인 성공!",
