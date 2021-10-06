@@ -1,5 +1,7 @@
 # GLASS_Server API 문서
 
+DGSW B1ND 6기 인턴 프로젝트 GLASS 서버 API 문서입니다.
+
 ### 게시물 불러오기 (Home)
 
 ```
@@ -104,4 +106,30 @@ POST /users/change-password
 
 ```
 GET /users/:id
+```
+
+---
+
+### 댓글 업로드 (Upload comment)
+
+```
+POST /comments/upload
+```
+
+### 수정할 댓글 받아오기 (get comment)
+
+```
+GET /comments/:id/edit
+```
+
+### 댓글 수정하기 (post comment)
+
+```
+POST /comments/:id/edit
+```
+
+### 댓글 삭제하기 (Delete comment)
+
+```
+DELETE /comments/:id
 ```
