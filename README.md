@@ -27,4 +27,37 @@ GET /search
 GET /writings/:id
 ```
 
-### 
+### 편집할 게시물 불러오기 (get Edit)
+```
+GET /writings/:id/edit
+```
+
+### 게시물 편집 (post Edit)
+```
+POST /writings/:id/edit
+```
+
+### 게시물 삭제 (Delete Posting)
+```
+DELETE /writings/:id/delete
+```
+
+### 게시물 좋아요 (Like)
+```
+GET /writings/:id/like
+```
+
+### 게시물에 첨부할 사진 업로드 (Upload images)
+```
+POST /writings/upload/imgs
+```
+
+### 게시물 업로드 (Upload Posting)
+```
+POST /writings/upload
+```
+
+* * *
+
+
+  
