@@ -4,7 +4,6 @@ import Comment from "../models/Comment";
 
 export const getPosts = async (req, res) => {
   const writings = await Writing.find({}).sort({ createdAt: "desc" });
-  console.log(writings);
   return res.status(200).json({
     status: 200,
     message: "메인 불러오기에 성공했습니다.",
@@ -101,6 +100,12 @@ export const postUpload = async (req, res) => {
     user: { _id },
   } = req;
   const { text, hashtags, imgs } = req.body;
+  if (!imgs) {
+    return res.status(400).json({
+      status: 400,
+      error: "사진을 첨부해주세요.",
+    });
+  }
   try {
     const newVideo = await Writing.create({
       text,
