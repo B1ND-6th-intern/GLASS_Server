@@ -5,6 +5,12 @@ import Comment from "../models/Comment";
 export const getPosts = async (req, res) => {
   const writings = await Writing.find({})
     .populate("owner")
+    .populate({
+      path: "comments",
+      populate: {
+        path: "owner",
+      },
+    })
     .sort({ createdAt: "desc" });
   return res.status(200).json({
     status: 200,
@@ -148,7 +154,7 @@ export const deleteWriting = async (req, res) => {
   const { id } = req.params;
   const {
     user: { _id },
-  } = req.session;
+  } = req;
   const writing = await Writing.findById(id);
   if (!writing) {
     res.status(404).json({
@@ -188,13 +194,10 @@ export const deleteWriting = async (req, res) => {
 
 export const postUploadComment = async (req, res) => {
   const {
-    user: { _id: userId },
-  } = req.session;
-  const {
-    text,
-    writing: { _id },
-  } = req.body;
-  const writing = await Writing.findById(_id);
+    user: { _id },
+  } = req;
+  const { text, writingId } = req.body;
+  const writing = await Writing.findById(writingId);
   if (!writing) {
     return res.status(404).json({
       status: 404,
@@ -204,7 +207,7 @@ export const postUploadComment = async (req, res) => {
   try {
     const comment = await Comment.create({
       text,
-      owner: userId,
+      owner: _id,
       writing,
     });
     writing.comments.push(comment._id);
@@ -240,7 +243,7 @@ export const getEditComment = async (req, res) => {
 export const postEditComment = async (req, res) => {
   const {
     user: { _id: userId },
-  } = req.session;
+  } = req;
   const { id } = req.params;
   const { text, writing } = req.body;
   const comment = await Comment.exists({ _id: id });
@@ -284,7 +287,7 @@ export const deleteComment = async (req, res) => {
   const { id } = req.params;
   const {
     user: { _id },
-  } = req.session;
+  } = req;
   const comment = await Comment.findById(id);
   if (!comment) {
     res.status(404).json({
@@ -305,13 +308,13 @@ export const deleteComment = async (req, res) => {
     await Writing.findByIdAndDelete(id);
     return res.status(200).json({
       status: 200,
-      message: "삭제 성공!",
+      message: "댓글 삭제 성공!",
     });
   } catch (error) {
     console.log(error);
     return res.status(400).json({
       status: 400,
-      error: "삭제 실패",
+      error: "댓글 삭제 실패",
     });
   }
 };
