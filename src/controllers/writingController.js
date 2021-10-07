@@ -3,7 +3,9 @@ import User from "../models/User";
 import Comment from "../models/Comment";
 
 export const getPosts = async (req, res) => {
-  const writings = await Writing.find({}).sort({ createdAt: "desc" });
+  const writings = await Writing.find({})
+    .populate("owner")
+    .sort({ createdAt: "desc" });
   return res.status(200).json({
     status: 200,
     message: "메인 불러오기에 성공했습니다.",
