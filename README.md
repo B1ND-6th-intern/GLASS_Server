@@ -7,7 +7,7 @@ DGSW B1ND 6기 인턴 프로젝트 GLASS 서버 API 문서입니다.
 ---
 <br/>
 
-### 게시물 불러오기 (Home)
+### 게시물들 불러오기 (Home)
 
 ```
 GET /
@@ -71,11 +71,15 @@ Parameters
 
 <br/>
 
-### 게시물 조회 (Watch)
+### 특정 게시물 조회 (Watch)
 
 ```
 GET /writings/:id
 ```
+
+<br/>
+
+### 인기 게시물들 불러오기 (get Popular postings)
 
 <br/>
 
