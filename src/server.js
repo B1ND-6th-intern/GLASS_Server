@@ -5,6 +5,7 @@ import rootRouter from "./routers/rootRouter";
 import writingRouter from "./routers/writingRouter";
 import userRouter from "./routers/userRouter";
 import commentRouter from "./routers/commentRouter";
+import questionRouter from "./routers/questionRouter";
 import cors from "cors";
 
 const app = express();
@@ -19,5 +20,6 @@ app.use("/", rootRouter);
 app.use("/writings", writingRouter);
 app.use("/users", userRouter);
 app.use("/comments", commentRouter);
+app.use("/questions", questionRouter);
 
 export default app;
