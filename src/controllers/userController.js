@@ -4,7 +4,7 @@ import bcrypt from "bcrypt";
 import nodemailer from "nodemailer";
 import jwt from "jsonwebtoken";
 
-let joinedUser = null;
+let joinedUser;
 
 export const postJoin = async (req, res) => {
   const { password, password2, email, name, permission, isAgree } = req.body;
