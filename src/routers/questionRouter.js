@@ -3,6 +3,6 @@ import { postquestion } from "../controllers/questionController";
 
 const questionRouter = express.Router();
 
-questionRouter.get("question", postquestion);
+questionRouter.route("/post-question").post(postquestion);
 
 export default questionRouter;
