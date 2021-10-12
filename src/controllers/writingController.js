@@ -19,6 +19,23 @@ export const getPosts = async (req, res) => {
   });
 };
 
+export const getPopularPosts = async (req, res) => {
+  const writings = await Writing.find({})
+    .populate("owner")
+    .populate({
+      path: "comments",
+      populate: {
+        path: "owner",
+      },
+    })
+    .sort({ like: "desc" });
+  return res.status(200).json({
+    status: 200,
+    message: "메인 불러오기에 성공했습니다.",
+    writings,
+  });
+};
+
 export const watch = async (req, res) => {
   const { id } = req.params;
   const writing = await Writing.findById(id);
