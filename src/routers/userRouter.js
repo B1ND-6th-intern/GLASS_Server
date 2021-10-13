@@ -5,6 +5,7 @@ import {
   postChangePassword,
   getEmailAuthorization,
   postEmailAuthorization,
+  getUserId,
 } from "../controllers/userController";
 import { avatarUpload, authenticateAccessToken } from "../middlewares";
 
@@ -20,6 +21,7 @@ userRouter.post(
   authenticateAccessToken,
   postChangePassword
 );
-userRouter.get(":id", see);
+userRouter.get("/user-id", authenticateAccessToken, getUserId);
+userRouter.get("/:id", see);
 
 export default userRouter;

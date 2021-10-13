@@ -6,6 +6,14 @@ import jwt from "jsonwebtoken";
 
 let joinedUser;
 
+export const getUserId = async (req, res) => {
+  const { _id } = req.user;
+  return res.status(200).json({
+    status: 200,
+    id: _id,
+  });
+};
+
 export const postJoin = async (req, res) => {
   const { password, password2, email, name, permission, isAgree } = req.body;
   let grade, classNumber, stuNumber;
