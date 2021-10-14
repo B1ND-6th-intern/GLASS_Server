@@ -159,6 +159,14 @@ POST /users/edit
 
 <br/>
 
+### 유저 아바타 업로드/수정 (edit avatar)
+
+```
+POST /users/edit/avatar
+```
+
+<br/>
+
 ### 유저 비밀번호 변경 (Change password)
 
 ```
