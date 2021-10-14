@@ -278,23 +278,13 @@ export const postLogin = async (req, res) => {
 export const postEdit = async (req, res) => {
   const {
     user: { _id },
-    body: { name, email },
+    body: { name, introduction },
   } = req;
-  const findEmail = await User.findOne({ email });
-  if (findEmail !== null) {
-    if (findEmail._id.toString() !== _id) {
-      return res.status(400).json({
-        status: 400,
-        error: "이 email은 이미 존재합니다.",
-        // This email already exists.
-      });
-    }
-  }
   const updatedUser = await User.findByIdAndUpdate(
     _id,
     {
       name,
-      email,
+      introduction,
     },
     { new: true }
   );
