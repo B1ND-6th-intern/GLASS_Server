@@ -12,6 +12,7 @@ const userSchema = new mongoose.Schema({
   permission: { type: Number, required: true }, // 0 학생, 1 학부모, 2 교직원
   writings: [{ type: mongoose.Types.ObjectId, ref: "Writing" }],
   introduction: { type: String, default: "안녕하세요 :)" },
+  avatar: { type: String },
 });
 
 userSchema.pre("save", async function () {
