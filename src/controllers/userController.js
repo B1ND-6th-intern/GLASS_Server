@@ -292,6 +292,8 @@ export const postEdit = async (req, res) => {
   return res.status(200).json({
     status: 200,
     message: "회원정보 수정 성공",
+    name,
+    introduction,
     // Member information modification successful!
   });
 };
@@ -301,15 +303,15 @@ export const postEditAvatar = async (req, res) => {
     user: { _id },
     file: { filename },
   } = req;
+  const user = await User.findById(_id);
   try {
-    await User.findByIdAndUpdate(_id, {
-      avatar: `/avatars/${filename}`,
-    });
+    user.avatar = `/avatars/${filename}`;
+    await user.save();
   } catch (error) {
-    console.log(error);
     return res.status(400).json({
       status: 400,
-      error: "회원 프로필 사진 수정 실패",
+      error: `회원 프로필 사진 수정 실패 : ${error}`,
+      // Member avatar modification failed!
     });
   }
   return res.status(200).json({
