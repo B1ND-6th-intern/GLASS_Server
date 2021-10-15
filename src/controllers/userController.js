@@ -16,6 +16,14 @@ export const getUserId = async (req, res) => {
 
 export const postJoin = async (req, res) => {
   const { password, password2, email, name, permission, isAgree } = req.body;
+  var passwordRules = /^[a-zA-Z0-9]{6,15}$/;
+  if (!passwordRules.test(password)) {
+    return res.status(400).json({
+      status: 400,
+      error: "숫자와 영문자 조합으로 6~15자리를 사용해야 합니다.",
+    });
+  }
+
   let grade, classNumber, stuNumber;
   if (isAgree === false) {
     return res.status(400).json({
@@ -314,9 +322,12 @@ export const postEditAvatar = async (req, res) => {
       // Member avatar modification failed!
     });
   }
+  const newavatar = req.file.filename;
+
   return res.status(200).json({
     status: 200,
     message: "회원 프로필 사진 수정 성공",
+    newavatar,
     // Member avatar modification successful!
   });
 };
@@ -333,6 +344,13 @@ export const postChangePassword = async (req, res) => {
       status: 400,
       error: "현재 비밀번호가 옳지 않습니다.",
       // The current password is incorrect.
+    });
+  }
+  var passwordRules = /^[a-zA-Z0-9]{6,15}$/;
+  if (!passwordRules.test(newPassword)) {
+    return res.status(400).json({
+      status: 400,
+      error: "숫자와 영문자 조합으로 6~15자리를 사용해야 합니다.",
     });
   }
   if (newPassword !== newPasswordConfirmation) {
