@@ -6,10 +6,9 @@ import {
   getEmailAuthorization,
   postEmailAuthorization,
   getUserId,
+  postEditAvatar,
 } from "../controllers/userController";
 import { avatarUpload, authenticateAccessToken } from "../middlewares";
-import { postEditAvatar } from "/Users/DGSW/Documents/GitHub/GLASS_Server/src/controllers/userController"; //김준호
-//import { postEditAvatar } from "/users/woojs/documents/github/glass_server/src/controllers/usercontroller"; //우준성
 
 const userRouter = express.Router();
 
@@ -18,9 +17,8 @@ userRouter
   .get(getEmailAuthorization)
   .post(postEmailAuthorization);
 userRouter.post("/edit", authenticateAccessToken, postEdit);
-userRouter.post("/edit/avatar", authenticateAccessToken, postEditAvatar);
 userRouter.post(
-  "edit/avatarimgs",
+  "/edit/avatar",
   authenticateAccessToken,
   avatarUpload.single("img"),
   postEditAvatar

@@ -311,6 +311,8 @@ export const postEditAvatar = async (req, res) => {
     user: { _id },
     file: { filename },
   } = req;
+  console.log(filename);
+  console.log(typeof filename);
   const user = await User.findById(_id);
   try {
     user.avatar = `/avatars/${filename}`;
@@ -322,12 +324,11 @@ export const postEditAvatar = async (req, res) => {
       // Member avatar modification failed!
     });
   }
-  const newavatar = req.file.filename;
+  const newavatar = filename;
 
   return res.status(200).json({
     status: 200,
     message: "회원 프로필 사진 수정 성공",
-    newavatar,
     // Member avatar modification successful!
   });
 };
