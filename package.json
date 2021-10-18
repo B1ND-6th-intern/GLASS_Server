@@ -1,6 +1,6 @@
 {
   "name": "glass_server",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "B1ND Intern Project GLASS, Server(API) Repository",
   "main": "src/init.js",
   "type": "module",

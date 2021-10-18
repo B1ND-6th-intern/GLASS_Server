@@ -4,7 +4,7 @@ import "./models/User";
 import "./models/Writing";
 import app from "./server";
 
-const PORT = 8080;
+const PORT = process.env.PORT;
 
 const handleListening = () => {
   console.log(`✅ Server listenting on port http://localhost:${PORT} 🚀`);
