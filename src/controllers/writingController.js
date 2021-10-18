@@ -1,6 +1,7 @@
 import Writing from "../models/Writing";
 import User from "../models/User";
 import Comment from "../models/Comment";
+import Like from "../models/Like";
 
 export const getPosts = async (req, res) => {
   const writings = await Writing.find({})
@@ -135,7 +136,7 @@ export const postUpload = async (req, res) => {
     const newVideo = await Writing.create({
       text,
       owner: _id,
-      hashtags: Writing.formatHashtags(hashtags),
+      hashtags,
       imgs,
     });
     const user = await User.findById(_id);
@@ -337,17 +338,38 @@ export const deleteComment = async (req, res) => {
 
 export const registerWritingLike = async (req, res) => {
   const { id } = req.params;
-  writing = await Writing.findById(id);
-  if (!writing) {
-    res.status(404).json({
-      status: 404,
-      error: "좋아요를 표시할 게시글을 찾지 못했습니다.",
+  const { _id } = req.user;
+  const writing = await Writing.findById(id);
+  try {
+    if (writing === undefined) {
+      res.status(404).json({
+        status: 404,
+        error: "좋아요를 표시할 게시글을 찾지 못했습니다.",
+      });
+    }
+    const like = await Like.findOne({
+      $and: [{ owner: _id }, { writing: id }],
+    });
+    if (like) {
+      await Like.findByIdAndDelete(like);
+      writing.likeCount--;
+      await writing.save();
+    } else {
+      await Like.create({
+        owner: _id,
+        writing: id,
+      });
+      writing.likeCount++;
+      await writing.save();
+    }
+    return res.status(200).json({
+      status: 200,
+      message: "좋아요 표시에 성공했습니다.",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: 500,
+      error: "서버 오류로 인해 좋아요 등록/해제에 실패했습니다.",
     });
   }
-  writing.like = writing.like + 1;
-  await writing.save();
-  return res.status(200).json({
-    status: 200,
-    message: "좋아요 표시에 성공했습니다.",
-  });
 };
