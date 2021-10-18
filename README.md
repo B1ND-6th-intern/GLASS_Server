@@ -110,7 +110,7 @@ DELETE /writings/:id/delete
 ### 게시물 좋아요 (Like)
 
 ```
-GET /writings/:id/like
+GET /writings/like/:id
 ```
 
 <br/>
