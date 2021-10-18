@@ -181,7 +181,7 @@ export const postEmailAuthorization = async (req, res) => {
         "인증시간을 초과했습니다. '재전송'을 눌러 다시 인증해주시기 바랍니다.",
     });
   }
-
+  console.log(joinedUser);
   if (joinedUser === null || joinedUser.isValid === true) {
     return res.status(400).json({
       status: 400,

@@ -4,6 +4,7 @@ import Comment from "../models/Comment";
 import Like from "../models/Like";
 
 export const getPosts = async (req, res) => {
+  const { _id } = req.user;
   const writings = await Writing.find({})
     .populate("owner")
     .populate({
