@@ -14,16 +14,16 @@ const writingRouter = express.Router();
 
 writingRouter.get("/:id([0-9a-f]{24})", authenticateAccessToken, watch);
 writingRouter
-  .route("/:id([0-9a-f]{24})/edit")
+  .route("/edit/:id([0-9a-f]{24})")
   .all(authenticateAccessToken)
   .get(getEdit)
   .post(postEdit);
 writingRouter.delete(
-  "/:id([0-9a-f]{24})/delete",
+  "/delete/:id([0-9a-f]{24})",
   authenticateAccessToken,
   deleteWriting
 );
-writingRouter.get("/:id([0-9a-f]{24})/like", registerWritingLike);
+writingRouter.get("/like/:id([0-9a-f]{24})", registerWritingLike);
 writingRouter.post("/upload", authenticateAccessToken, postUpload);
 writingRouter.post("/upload/imgs", imgsUpload.array("img", 10), postUploadImgs);
 

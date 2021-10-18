@@ -17,7 +17,7 @@ export const postquestion = async (req, res) => {
   });
 
   const mailOptions = {
-    from: "glassfromb1nd@gmail.com",
+    from: sendName,
     to: recName,
     subject: "GLASS 문의사항 답변",
     text: `
@@ -41,7 +41,6 @@ export const postquestion = async (req, res) => {
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
       console.log(error);
-      getquestion = null;
       return res.status(400).json({
         status: 400,
         error: "문의사항을 전달 실패",

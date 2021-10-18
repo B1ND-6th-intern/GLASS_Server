@@ -16,8 +16,8 @@ export const getUserId = async (req, res) => {
 
 export const postJoin = async (req, res) => {
   const { password, password2, email, name, permission, isAgree } = req.body;
-  var passwordRules = /^[a-zA-Z0-9]{6,15}$/;
-  if (!passwordRules.test(password)) {
+  const passwordRules = /^[a-zA-Z0-9]{6,15}$/;
+  if (passwordRules.test(password) === false) {
     return res.status(400).json({
       status: 400,
       error: "숫자와 영문자 조합으로 6~15자리를 사용해야 합니다.",
@@ -49,7 +49,7 @@ export const postJoin = async (req, res) => {
     });
   }
   const exists = await User.exists({ email: email });
-  if (exists) {
+  if (exists !== false) {
     return res.status(400).json({
       status: 400,
       error: "이 email은 이미 사용되고 있습니다. 다른 email로 바꿔주세요.",
@@ -79,8 +79,8 @@ export const postJoin = async (req, res) => {
   } catch (error) {
     console.log(error);
     joinedUser = null;
-    return res.status(400).json({
-      status: 400,
+    return res.status(500).json({
+      status: 500,
       error: "회원가입에 실패하였습니다. 다시 시도해주십시오.",
       // Registration failed, Please try again.
     });
@@ -99,7 +99,7 @@ export const getEmailAuthorization = async (req, res) => {
     authUser: joinedUser._id,
   });
 
-  authorization.sendCount -= 1;
+  authorization.sendCount--;
   authorization.save();
 
   if (authorization.sendCount < 0) {
@@ -118,7 +118,6 @@ export const getEmailAuthorization = async (req, res) => {
 
   const sendName = "glassfromb1nd@gmail.com";
   const password = process.env.EMAIL_PASSWORD;
-  const recName = joinedUser.email;
   const confirmationCode = Math.floor(Math.random() * 8999) + 1000;
   const MailerConfilm = false;
   joinedUser.MailerConfilm = MailerConfilm;
@@ -135,7 +134,7 @@ export const getEmailAuthorization = async (req, res) => {
 
   const mailOptions = {
     from: "glassfromb1nd@gmail.com",
-    to: recName,
+    to: joinedUser.email,
     subject: "GLASS 회원가입 인증번호",
     text: `
 안녕하세요 :) 저희 GLASS를 이용해주셔서 감사합니다.
@@ -150,12 +149,12 @@ export const getEmailAuthorization = async (req, res) => {
 
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
-      authorization.sendCount += 1;
+      authorization.sendCount++;
       authorization.save();
       console.log(error);
 
-      return res.status(400).json({
-        status: 400,
+      return res.status(500).json({
+        status: 500,
         error: "메일 발송에 실패하였습니다.",
         // Failed to send mail.
       });
@@ -181,7 +180,7 @@ export const postEmailAuthorization = async (req, res) => {
         "인증시간을 초과했습니다. '재전송'을 눌러 다시 인증해주시기 바랍니다.",
     });
   }
-
+  console.log(joinedUser.isValid);
   if (joinedUser === null || joinedUser.isValid === true) {
     return res.status(400).json({
       status: 400,
@@ -243,7 +242,7 @@ export const postEmailAuthorization = async (req, res) => {
 export const postLogin = async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
-  if (!user) {
+  if (user === undefined) {
     return res.status(400).json({
       status: 400,
       error: "이 Email을 가진 계정이 존재하지 않습니다.",
@@ -258,7 +257,7 @@ export const postLogin = async (req, res) => {
     });
   }
   const ok = await bcrypt.compare(password, user.password);
-  if (!ok) {
+  if (ok === false) {
     return res.status(400).json({
       status: 400,
       error: "비밀번호가 옳지 않습니다.",
@@ -371,7 +370,7 @@ export const postChangePassword = async (req, res) => {
 export const see = async (req, res) => {
   const { id } = req.params;
   const user = await User.findById(id).populate("writings");
-  if (!user) {
+  if (user === undefined) {
     return res.status(404).json({
       status: 404,
       error: "유저를 찾지 못했습니다.",
@@ -387,7 +386,7 @@ export const see = async (req, res) => {
 export const search = async (req, res) => {
   const { keyword } = req.query;
   let users = [];
-  if (keyword) {
+  if (keyword !== undefined) {
     users = await User.find({
       name: {
         $regex: new RegExp(keyword, "i"),
