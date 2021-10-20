@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const writingSchema = new mongoose.Schema({
-  text: { type: String, required: true, trim: true },
+  text: { type: String, trim: true },
   createdAt: { type: Date, required: true, default: Date.now },
   hashtags: [{ type: String, trim: true }],
   likeCount: { type: Number, default: 0, required: true },
