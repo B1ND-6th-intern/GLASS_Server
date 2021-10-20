@@ -25,6 +25,11 @@ writingRouter.delete(
 );
 writingRouter.post("/like/:id([0-9a-f]{24})", registerWritingLike);
 writingRouter.post("/upload", authenticateAccessToken, postUpload);
-writingRouter.post("/upload/imgs", imgsUpload.array("img", 10), postUploadImgs);
+writingRouter.post(
+  "/upload/imgs",
+  authenticateAccessToken,
+  imgsUpload.array("img", 10),
+  postUploadImgs
+);
 
 export default writingRouter;
