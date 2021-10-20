@@ -2,6 +2,7 @@ import Writing from "../models/Writing";
 import User from "../models/User";
 import Comment from "../models/Comment";
 import Like from "../models/Like";
+import fs from "fs";
 
 export const getPosts = async (req, res) => {
   try {
@@ -227,6 +228,10 @@ export const deleteWriting = async (req, res) => {
     user.writings.pull(id);
     user.save();
     await Writing.findByIdAndDelete(id);
+    fs.unlink("621ee4f3c5f9daa83cc18bc18a9e8eeb", function (err) {
+      if (err) throw err;
+      console.log("file deleted");
+    });
     return res.status(200).json({
       status: 200,
       message: "삭제 성공!",
