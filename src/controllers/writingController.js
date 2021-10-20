@@ -157,7 +157,7 @@ export const postUpload = async (req, res) => {
     user: { _id },
   } = req;
   const { text, hashtags, imgs } = req.body;
-  if (imgs === undefined) {
+  if (imgs === null) {
     return res.status(400).json({
       status: 400,
       error: "사진을 첨부해주세요.",
@@ -181,7 +181,7 @@ export const postUpload = async (req, res) => {
     console.log("postUpload", error);
     return res.status(500).json({
       status: 500,
-      error: "업로드 실패",
+      error: "서버 오류로 인한 업로드 실패",
     });
   }
 };
