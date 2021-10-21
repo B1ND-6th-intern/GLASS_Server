@@ -4,7 +4,6 @@ import {
   getInfiniteScrollPosts,
   getPosts,
 } from "../controllers/writingController";
-// import { postquestion } from "../controllers/questionController";
 
 const rootRouter = express.Router();
 
@@ -13,7 +12,5 @@ rootRouter.get("/posts/:index", getInfiniteScrollPosts);
 rootRouter.post("/join", postJoin);
 rootRouter.post("/login", postLogin);
 rootRouter.get("/search", search);
-// rootRouter.get("/question", (req, res) => console.log("haha"));
-// rootRouter.post("/question", postquestion);
 
 export default rootRouter;
