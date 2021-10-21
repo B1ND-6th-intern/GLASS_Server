@@ -4,7 +4,9 @@ import {
   getInfiniteScrollPosts,
   getPosts,
   postQuestion,
+  getPopularPosts,
 } from "../controllers/writingController";
+import { authenticateAccessToken } from "../middlewares";
 
 const rootRouter = express.Router();
 
@@ -14,6 +16,7 @@ rootRouter.get(
   authenticateAccessToken,
   getInfiniteScrollPosts
 );
+rootRouter.get("/posts/popular", getPopularPosts);
 rootRouter.post("/join", postJoin);
 rootRouter.post("/login", postLogin);
 rootRouter.get("/search", search);

@@ -47,9 +47,9 @@ export const getInfiniteScrollPosts = async (req, res) => {
       $and: [{ owner: _id }, { writing: writing._id }],
     });
     if (!like) {
-      writing.like = false;
+      writing.isLike = false;
     } else {
-      writing.like = true;
+      writing.isLike = true;
     }
     return res.status(200).json({
       status: 200,
@@ -89,6 +89,7 @@ export const getPopularPosts = async (req, res) => {
 };
 
 export const watch = async (req, res) => {
+  const { _id } = req.user;
   const { id } = req.params;
   try {
     const writing = await Writing.findById(id);
@@ -97,6 +98,14 @@ export const watch = async (req, res) => {
         status: 404,
         message: "글을 찾을 수 없습니다.",
       });
+    }
+    const like = await Like.findOne({
+      $and: [{ owner: _id }, { writing: writing._id }],
+    });
+    if (!like) {
+      writing.like = false;
+    } else {
+      writing.like = true;
     }
     return res.status(200).json({
       status: 200,
@@ -241,27 +250,28 @@ export const deleteWriting = async (req, res) => {
   const {
     user: { _id },
   } = req;
-  const writing = await Writing.findById(id);
-  if (writing === undefined) {
-    res.status(404).json({
-      status: 404,
-      error: "삭제할 게시물을 찾지 못함",
-    });
-  }
-  if (String(writing.owner) !== String(_id)) {
-    return res.status(403).json({
-      status: 403,
-      error: "권한이 없음",
-    });
-  }
-  const user = await User.findById(_id);
-  if (user === undefined) {
-    res.status(404).json({
-      status: 404,
-      error: "사용자를 찾지 못함",
-    });
-  }
   try {
+    const writing = await Writing.findById(id);
+    if (writing === undefined) {
+      res.status(404).json({
+        status: 404,
+        error: "삭제할 게시물을 찾지 못함",
+      });
+    }
+    if (String(writing.owner) !== String(_id)) {
+      return res.status(403).json({
+        status: 403,
+        error: "권한이 없음",
+      });
+    }
+    const user = await User.findById(_id);
+    if (user === undefined) {
+      res.status(404).json({
+        status: 404,
+        error: "사용자를 찾지 못함",
+      });
+    }
+
     user.writings.pull(id);
     user.save();
     await Writing.findByIdAndDelete(id);
