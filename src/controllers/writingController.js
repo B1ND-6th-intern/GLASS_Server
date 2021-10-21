@@ -15,11 +15,37 @@ export const getPosts = async (req, res) => {
           path: "owner",
         },
       })
-      .sort({ createdAt: "desc" });
+      .sort({ _id: "desc" });
     return res.status(200).json({
       status: 200,
       message: "메인 불러오기에 성공했습니다.",
       writings,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      stauts: 500,
+      error: "서버 오류로 인해 게시글 조회에 실패했습니다",
+    });
+  }
+};
+
+export const getInfiniteScrollPosts = async (req, res) => {
+  const { index } = req.params;
+  try {
+    const writings = await Writing.find({})
+      .populate("owner")
+      .populate({
+        path: "comments",
+        populate: {
+          path: "owner",
+        },
+      })
+      .sort({ _id: "desc" });
+    const writing = writings[index];
+    return res.status(200).json({
+      status: 200,
+      message: "메인 불러오기에 성공했습니다.",
+      writing,
     });
   } catch (error) {
     return res.status(500).json({
