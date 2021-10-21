@@ -23,7 +23,7 @@ writingRouter.delete(
   authenticateAccessToken,
   deleteWriting
 );
-writingRouter.post("/like/:id([0-9a-f]{24})", registerWritingLike);
+writingRouter.get("/like/:id([0-9a-f]{24})", registerWritingLike);
 writingRouter.post("/upload", authenticateAccessToken, postUpload);
 writingRouter.post(
   "/upload/imgs",
