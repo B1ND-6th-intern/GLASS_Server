@@ -453,9 +453,8 @@ export const registerWritingLike = async (req, res) => {
   }
 };
 
-export const postquestion = async (req, res) => {
+export const postQuestion = async (req, res) => {
   const { name, email, title, type, getquestion } = req.body;
-
   const sendName = "glassfromb1nd@gmail.com";
   const password = process.env.EMAIL_PASSWORD;
   const recName = email;
