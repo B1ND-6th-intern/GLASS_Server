@@ -95,6 +95,10 @@ GET /writings/:id
 
 ### 인기 게시물들 불러오기 (get Popular postings)
 
+```
+GET /posts/popular
+```
+
 <br/>
 
 ### 편집할 게시물 불러오기 (get Edit)
