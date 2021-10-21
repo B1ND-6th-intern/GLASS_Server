@@ -89,6 +89,11 @@ GET /writings/:id
 GET /writings/:id/edit
 ```
 
+Parameters
+|Name|Type|In|Description|
+|------|---|---|---|
+|token|string|headers||
+
 <br/>
 
 ### 게시물 편집 (post Edit)
@@ -96,6 +101,11 @@ GET /writings/:id/edit
 ```
 POST /writings/:id/edit
 ```
+
+Parameters
+|Name|Type|In|Description|
+|------|---|---|---|
+|token|string|headers||
 
 <br/>
 
@@ -105,6 +115,11 @@ POST /writings/:id/edit
 DELETE /writings/:id/delete
 ```
 
+Parameters
+|Name|Type|In|Description|
+|------|---|---|---|
+|token|string|headers||
+
 <br/>
 
 ### 게시물 좋아요 (Like)
@@ -112,6 +127,11 @@ DELETE /writings/:id/delete
 ```
 GET /writings/like/:id
 ```
+
+Parameters
+|Name|Type|In|Description|
+|------|---|---|---|
+|token|string|headers||
 
 <br/>
 
@@ -121,6 +141,11 @@ GET /writings/like/:id
 POST /writings/upload/imgs
 ```
 
+Parameters
+|Name|Type|In|Description|
+|------|---|---|---|
+|token|string|headers||
+
 <br/>
 
 ### 게시물 업로드 (Upload Posting)
@@ -128,6 +153,11 @@ POST /writings/upload/imgs
 ```
 POST /writings/upload
 ```
+
+Parameters
+|Name|Type|In|Description|
+|------|---|---|---|
+|token|string|headers||
 
 <br/>
 
@@ -157,6 +187,11 @@ POST /users/email-auth
 POST /users/edit
 ```
 
+Parameters
+|Name|Type|In|Description|
+|------|---|---|---|
+|token|string|headers||
+
 <br/>
 
 ### 유저 아바타 업로드/수정 (edit avatar)
@@ -164,6 +199,11 @@ POST /users/edit
 ```
 POST /users/edit/avatar
 ```
+
+Parameters
+|Name|Type|In|Description|
+|------|---|---|---|
+|token|string|headers||
 
 <br/>
 
@@ -173,6 +213,11 @@ POST /users/edit/avatar
 POST /users/change-password
 ```
 
+Parameters
+|Name|Type|In|Description|
+|------|---|---|---|
+|token|string|headers||
+
 <br/>
 
 ### 유저 정보 조회 (See user's profile)
@@ -180,6 +225,19 @@ POST /users/change-password
 ```
 GET /users/:id
 ```
+
+<br/>
+
+### 유저(자신) 아이디 조회
+
+```
+GET /users/user-id
+```
+
+Parameters
+|Name|Type|In|Description|
+|------|---|---|---|
+|token|string|headers||
 
 <br/>
 
@@ -193,6 +251,11 @@ GET /users/:id
 POST /comments/upload
 ```
 
+Parameters
+|Name|Type|In|Description|
+|------|---|---|---|
+|token|string|headers||
+
 <br/>
 
 ### 수정할 댓글 받아오기 (get comment)
@@ -200,6 +263,11 @@ POST /comments/upload
 ```
 GET /comments/:id/edit
 ```
+
+Parameters
+|Name|Type|In|Description|
+|------|---|---|---|
+|token|string|headers||
 
 <br/>
 
@@ -209,6 +277,11 @@ GET /comments/:id/edit
 POST /comments/:id/edit
 ```
 
+Parameters
+|Name|Type|In|Description|
+|------|---|---|---|
+|token|string|headers||
+
 <br/>
 
 ### 댓글 삭제하기 (Delete comment)
@@ -216,5 +289,10 @@ POST /comments/:id/edit
 ```
 DELETE /comments/:id
 ```
+
+Parameters
+|Name|Type|In|Description|
+|------|---|---|---|
+|token|string|headers||
 
 <br/>
