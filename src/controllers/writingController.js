@@ -30,6 +30,7 @@ export const getPosts = async (req, res) => {
 };
 
 export const getInfiniteScrollPosts = async (req, res) => {
+  const { _id } = req.user;
   const { index } = req.params;
   try {
     const writings = await Writing.find({})
@@ -42,6 +43,14 @@ export const getInfiniteScrollPosts = async (req, res) => {
       })
       .sort({ _id: "desc" });
     const writing = writings[index];
+    const like = await Like.findOne({
+      $and: [{ owner: _id }, { writing: writing._id }],
+    });
+    if (!like) {
+      writing.like = false;
+    } else {
+      writing.like = true;
+    }
     return res.status(200).json({
       status: 200,
       message: "메인 불러오기에 성공했습니다.",
@@ -444,9 +453,8 @@ export const registerWritingLike = async (req, res) => {
   }
 };
 
-export const postquestion = async (req, res) => {
+export const postQuestion = async (req, res) => {
   const { name, email, title, type, getquestion } = req.body;
-
   const sendName = "glassfromb1nd@gmail.com";
   const password = process.env.EMAIL_PASSWORD;
   const recName = email;

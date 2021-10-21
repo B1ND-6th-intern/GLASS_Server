@@ -6,7 +6,7 @@ const likeSchema = new mongoose.Schema({
     ref: "Writing",
     required: true,
   },
-  owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  owner: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "User" },
 });
 
 const Like = mongoose.model("Like", likeSchema);
