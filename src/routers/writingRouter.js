@@ -12,7 +12,7 @@ import { imgsUpload, authenticateAccessToken } from "../middlewares";
 
 const writingRouter = express.Router();
 
-writingRouter.get("/:id([0-9a-f]{24})", authenticateAccessToken, watch);
+writingRouter.get("/:id([0-9a-f]{24})", watch);
 writingRouter
   .route("/edit/:id([0-9a-f]{24})")
   .all(authenticateAccessToken)
@@ -23,7 +23,11 @@ writingRouter.delete(
   authenticateAccessToken,
   deleteWriting
 );
-writingRouter.get("/like/:id([0-9a-f]{24})", registerWritingLike);
+writingRouter.get(
+  "/like/:id([0-9a-f]{24})",
+  authenticateAccessToken,
+  registerWritingLike
+);
 writingRouter.post("/upload", authenticateAccessToken, postUpload);
 writingRouter.post(
   "/upload/imgs",
