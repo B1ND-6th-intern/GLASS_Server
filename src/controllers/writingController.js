@@ -42,6 +42,12 @@ export const getInfiniteScrollPosts = async (req, res) => {
         },
       })
       .sort({ _id: "desc" });
+    if (writings[index] === undefined) {
+      return res.status(200).json({
+        status: 200,
+        message: "무한 스크롤 끝에 다다랐습니다.",
+      });
+    }
     const writing = writings[index];
     const like = await Like.findOne({
       $and: [{ owner: _id }, { writing: writing._id }],
