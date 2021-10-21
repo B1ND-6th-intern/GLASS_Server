@@ -104,7 +104,7 @@ GET /posts/popular
 ### 편집할 게시물 불러오기 (get Edit)
 
 ```
-GET /writings/:id/edit
+GET /writings/edit/:id
 ```
 
 Parameters
@@ -117,7 +117,7 @@ Parameters
 ### 게시물 편집 (post Edit)
 
 ```
-POST /writings/:id/edit
+POST /writings/edit/:id
 ```
 
 Parameters
@@ -130,7 +130,7 @@ Parameters
 ### 게시물 삭제 (Delete Posting)
 
 ```
-DELETE /writings/:id/delete
+DELETE /writings/delete/:id
 ```
 
 Parameters
@@ -279,7 +279,7 @@ Parameters
 ### 수정할 댓글 받아오기 (get comment)
 
 ```
-GET /comments/:id/edit
+GET /comments/edit/:id
 ```
 
 Parameters
@@ -292,7 +292,7 @@ Parameters
 ### 댓글 수정하기 (post comment)
 
 ```
-POST /comments/:id/edit
+POST /comments/edit/:id
 ```
 
 Parameters
