@@ -47,9 +47,9 @@ export const getInfiniteScrollPosts = async (req, res) => {
       $and: [{ owner: _id }, { writing: writing._id }],
     });
     if (!like) {
-      writing.like = false;
+      writing.isLike = false;
     } else {
-      writing.like = true;
+      writing.isLike = true;
     }
     return res.status(200).json({
       status: 200,
