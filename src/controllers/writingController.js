@@ -158,6 +158,7 @@ export const postUpload = async (req, res) => {
     user: { _id },
   } = req;
   const { text, hashtags, imgs } = req.body;
+  console.log(imgs);
   if (imgs === null) {
     return res.status(400).json({
       status: 400,
