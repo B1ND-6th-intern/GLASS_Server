@@ -243,45 +243,52 @@ export const postEmailAuthorization = async (req, res) => {
 
 export const postLogin = async (req, res) => {
   const { email, password } = req.body;
-  const user = await User.findOne({ email });
-  if (user === undefined) {
-    return res.status(400).json({
-      status: 400,
-      error: "이 Email을 가진 계정이 존재하지 않습니다.",
-      // An account with this email does not exist.
-    });
-  }
-  if (!user.isValid) {
-    return res.status(400).json({
-      status: 400,
-      error: "Email 인증이 되지 않았습니다.",
-      // Email is not verified.
-    });
-  }
-  const ok = await bcrypt.compare(password, user.password);
-  if (ok === false) {
-    return res.status(400).json({
-      status: 400,
-      error: "비밀번호가 옳지 않습니다.",
-      // The password is incorrect.
-    });
-  }
-  const token = jwt.sign(
-    {
-      _id: user._id,
-      email: user.email,
-    },
-    process.env.JWT_SECRET,
-    {
-      expiresIn: "50m", // 유효기간 50분 => 50분 이후 토큰이 재발급 됨
-      issuer: "glass",
+  try {
+    const user = await User.findOne({ email });
+    if (user === undefined) {
+      return res.status(400).json({
+        status: 400,
+        error: "이 Email을 가진 계정이 존재하지 않습니다.",
+        // An account with this email does not exist.
+      });
     }
-  );
-  return res.status(200).json({
-    status: 200,
-    message: "로그인 성공!",
-    token, // 발행된 jwt 토큰
-  });
+    if (!user.isValid) {
+      return res.status(400).json({
+        status: 400,
+        error: "Email 인증이 되지 않았습니다.",
+        // Email is not verified.
+      });
+    }
+    const ok = await bcrypt.compare(password, user.password);
+    if (ok === false) {
+      return res.status(400).json({
+        status: 400,
+        error: "비밀번호가 옳지 않습니다.",
+        // The password is incorrect.
+      });
+    }
+    const token = jwt.sign(
+      {
+        _id: user._id,
+        email: user.email,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1d",
+        issuer: "glass",
+      }
+    );
+    return res.status(200).json({
+      status: 200,
+      message: "로그인 성공!",
+      token,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: 500,
+      message: "로그인 실패",
+    });
+  }
 };
 
 export const postEdit = async (req, res) => {
