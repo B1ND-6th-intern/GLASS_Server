@@ -329,27 +329,34 @@ export const postUploadComment = async (req, res) => {
       message: "댓글 작성 성공!",
     });
   } catch (error) {
-    console.log("postComment", error);
-    return res.sttus(500).json({
+    return res.status(500).json({
       status: 500,
-      error: "댓글 작성 실패",
+      error: "서버 오류로 인해 댓글 작성에 실패했습니다.",
     });
   }
 };
 
 export const getEditComment = async (req, res) => {
   const { id } = req.params;
-  const comment = await Comment.findById(id);
-  if (comment === undefined) {
-    return res.status(404).json({
-      status: 404,
-      error: "댓글을 찾을 수 없습니다.",
+  try {
+    const comment = await Comment.findById(id);
+    if (comment === undefined) {
+      return res.status(404).json({
+        status: 404,
+        error: "댓글을 찾을 수 없습니다.",
+      });
+    }
+    return res.status(200).json({
+      status: 200,
+      comment,
     });
+  } catch (error) {
+    return res.status(500).json({
+      status: 500,
+      error: "서버 오류로 인해 댓글을 찾지 못했습니다."
+    })
   }
-  return res.status(200).json({
-    status: 200,
-    comment,
-  });
+  
 };
 
 export const postEditComment = async (req, res) => {
