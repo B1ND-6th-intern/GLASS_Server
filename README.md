@@ -7,11 +7,25 @@ DGSW B1ND 6기 인턴 프로젝트 GLASS 서버 API 문서입니다.
 ---
 <br/>
 
-### 게시물들 불러오기 (Home)
+### 게시물 리스트 불러오기 (Home)
 
 ```
-GET /
+GET /posts
 ```
+
+<br/>
+
+
+### 게시물 리스트 불러오기 - 무한스크롤 전용 (Home)
+
+```
+GET /posts/:index
+```
+
+Parameters
+|Name|Type|In|Description|
+|------|---|---|---|
+|token|string|headers||
 
 <br/>
 
@@ -81,12 +95,16 @@ GET /writings/:id
 
 ### 인기 게시물들 불러오기 (get Popular postings)
 
+```
+GET /posts/popular
+```
+
 <br/>
 
 ### 편집할 게시물 불러오기 (get Edit)
 
 ```
-GET /writings/:id/edit
+GET /writings/edit/:id
 ```
 
 Parameters
@@ -99,7 +117,7 @@ Parameters
 ### 게시물 편집 (post Edit)
 
 ```
-POST /writings/:id/edit
+POST /writings/edit/:id
 ```
 
 Parameters
@@ -112,7 +130,7 @@ Parameters
 ### 게시물 삭제 (Delete Posting)
 
 ```
-DELETE /writings/:id/delete
+DELETE /writings/delete/:id
 ```
 
 Parameters
@@ -261,7 +279,7 @@ Parameters
 ### 수정할 댓글 받아오기 (get comment)
 
 ```
-GET /comments/:id/edit
+GET /comments/edit/:id
 ```
 
 Parameters
@@ -274,7 +292,7 @@ Parameters
 ### 댓글 수정하기 (post comment)
 
 ```
-POST /comments/:id/edit
+POST /comments/edit/:id
 ```
 
 Parameters

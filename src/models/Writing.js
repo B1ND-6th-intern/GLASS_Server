@@ -8,6 +8,7 @@ const writingSchema = new mongoose.Schema({
   owner: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "User" },
   comments: [{ type: mongoose.Types.ObjectId, ref: "Comment" }],
   imgs: [{ type: String, required: true }],
+  isLike: { type: Boolean, default: false },
 });
 
 const Writing = mongoose.model("Writing", writingSchema);

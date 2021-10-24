@@ -12,14 +12,21 @@ export const authenticateAccessToken = (req, res, next) => {
   }
   jwt.verify(token, process.env.JWT_SECRET, (error, user) => {
     if (error) {
-      console.log("토큰 에러 : " + error);
-      return res.status(403).json({
-        status: 403,
-        error: "토큰 인증 과정에서 오류가 발생했습니다.",
-      });
+      if (error.name === "TokenExpiredError") {
+        return res.status(419).json({
+          status: 419,
+          error: "토큰이 만료되었습니다. 다시 로그인해주세요.",
+        });
+      } else if (error) {
+        return res.status(401).json({
+          status: 401,
+          error: "유효하지 않은 토큰입니다.",
+        });
+      }
+    } else {
+      req.user = user;
+      next();
     }
-    req.user = user;
-    next();
   });
 };
 

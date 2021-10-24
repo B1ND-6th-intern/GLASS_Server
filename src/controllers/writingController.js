@@ -30,6 +30,7 @@ export const getPosts = async (req, res) => {
 };
 
 export const getInfiniteScrollPosts = async (req, res) => {
+  const { _id } = req.user;
   const { index } = req.params;
   try {
     const writings = await Writing.find({})
@@ -41,7 +42,21 @@ export const getInfiniteScrollPosts = async (req, res) => {
         },
       })
       .sort({ _id: "desc" });
+    if (writings[index] === undefined) {
+      return res.status(200).json({
+        status: 200,
+        message: "무한 스크롤 끝에 다다랐습니다.",
+      });
+    }
     const writing = writings[index];
+    const like = await Like.findOne({
+      $and: [{ owner: _id }, { writing: writing._id }],
+    });
+    if (!like) {
+      writing.isLike = false;
+    } else {
+      writing.isLike = true;
+    }
     return res.status(200).json({
       status: 200,
       message: "메인 불러오기에 성공했습니다.",
@@ -80,6 +95,7 @@ export const getPopularPosts = async (req, res) => {
 };
 
 export const watch = async (req, res) => {
+  const { _id } = req.user;
   const { id } = req.params;
   try {
     const writing = await Writing.findById(id);
@@ -88,6 +104,14 @@ export const watch = async (req, res) => {
         status: 404,
         message: "글을 찾을 수 없습니다.",
       });
+    }
+    const like = await Like.findOne({
+      $and: [{ owner: _id }, { writing: writing._id }],
+    });
+    if (!like) {
+      writing.like = false;
+    } else {
+      writing.like = true;
     }
     return res.status(200).json({
       status: 200,
@@ -232,27 +256,28 @@ export const deleteWriting = async (req, res) => {
   const {
     user: { _id },
   } = req;
-  const writing = await Writing.findById(id);
-  if (writing === undefined) {
-    res.status(404).json({
-      status: 404,
-      error: "삭제할 게시물을 찾지 못함",
-    });
-  }
-  if (String(writing.owner) !== String(_id)) {
-    return res.status(403).json({
-      status: 403,
-      error: "권한이 없음",
-    });
-  }
-  const user = await User.findById(_id);
-  if (user === undefined) {
-    res.status(404).json({
-      status: 404,
-      error: "사용자를 찾지 못함",
-    });
-  }
   try {
+    const writing = await Writing.findById(id);
+    if (writing === undefined) {
+      res.status(404).json({
+        status: 404,
+        error: "삭제할 게시물을 찾지 못함",
+      });
+    }
+    if (String(writing.owner) !== String(_id)) {
+      return res.status(403).json({
+        status: 403,
+        error: "권한이 없음",
+      });
+    }
+    const user = await User.findById(_id);
+    if (user === undefined) {
+      res.status(404).json({
+        status: 404,
+        error: "사용자를 찾지 못함",
+      });
+    }
+
     user.writings.pull(id);
     user.save();
     await Writing.findByIdAndDelete(id);
@@ -304,27 +329,34 @@ export const postUploadComment = async (req, res) => {
       message: "댓글 작성 성공!",
     });
   } catch (error) {
-    console.log("postComment", error);
-    return res.sttus(500).json({
+    return res.status(500).json({
       status: 500,
-      error: "댓글 작성 실패",
+      error: "서버 오류로 인해 댓글 작성에 실패했습니다.",
     });
   }
 };
 
 export const getEditComment = async (req, res) => {
   const { id } = req.params;
-  const comment = await Comment.findById(id);
-  if (comment === undefined) {
-    return res.status(404).json({
-      status: 404,
-      error: "댓글을 찾을 수 없습니다.",
+  try {
+    const comment = await Comment.findById(id);
+    if (comment === undefined) {
+      return res.status(404).json({
+        status: 404,
+        error: "댓글을 찾을 수 없습니다.",
+      });
+    }
+    return res.status(200).json({
+      status: 200,
+      comment,
     });
+  } catch (error) {
+    return res.status(500).json({
+      status: 500,
+      error: "서버 오류로 인해 댓글을 찾지 못했습니다."
+    })
   }
-  return res.status(200).json({
-    status: 200,
-    comment,
-  });
+  
 };
 
 export const postEditComment = async (req, res) => {
@@ -444,9 +476,8 @@ export const registerWritingLike = async (req, res) => {
   }
 };
 
-export const postquestion = async (req, res) => {
+export const postQuestion = async (req, res) => {
   const { name, email, title, type, getquestion } = req.body;
-
   const sendName = "glassfromb1nd@gmail.com";
   const password = process.env.EMAIL_PASSWORD;
   const recName = email;
