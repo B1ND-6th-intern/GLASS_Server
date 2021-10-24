@@ -256,7 +256,7 @@ export const deleteWriting = async (req, res) => {
     user.writings.pull(id);
     user.save();
     await Writing.findByIdAndDelete(id);
-    fs.unlink("621ee4f3c5f9daa83cc18bc18a9e8eeb", function (err) {
+    fs.unlink(id, function (err) {
       if (err) throw err;
       console.log("file deleted");
     });
