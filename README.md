@@ -29,6 +29,15 @@ Parameters
 
 <br/>
 
+
+### 인기 게시물들 불러오기 (get Popular postings)
+
+```
+GET /posts/popular
+```
+
+<br/>
+
 ### 회원가입 (Join)
 
 ```
@@ -89,14 +98,6 @@ Parameters
 
 ```
 GET /writings/:id
-```
-
-<br/>
-
-### 인기 게시물들 불러오기 (get Popular postings)
-
-```
-GET /posts/popular
 ```
 
 <br/>
