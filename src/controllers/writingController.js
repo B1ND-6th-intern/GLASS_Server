@@ -84,7 +84,7 @@ export const getPopularPosts = async (req, res) => {
     return res.status(200).json({
       status: 200,
       message: "메인 불러오기에 성공했습니다.",
-      writings,
+      writings: writings.slice(0, 3),
     });
   } catch (error) {
     return res.status(500).json({
