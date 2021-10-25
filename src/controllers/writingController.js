@@ -400,31 +400,31 @@ export const postEditComment = async (req, res) => {
 };
 
 export const deleteComment = async (req, res) => {
-  const { id } = req.params;
   const {
     user: { _id },
+    params: { id },
   } = req;
-  const comment = await Comment.findById(id);
-  if (comment === undefined) {
-    res.status(404).json({
-      status: 404,
-      error: "삭제할 댓글을 찾지 못함",
-    });
-  }
-  if (String(comment.owner) !== String(_id)) {
-    return res.status(403).json({
-      status: 403,
-      error: "권한이 없음",
-    });
-  }
-  const writing = await Writing.findById(comment.writing);
   try {
-    writing.comments.pull(id);
-    writing.save();
-    await Writing.findByIdAndDelete(id);
+    const comment = await Comment.findById(id);
+    if (comment === undefined) {
+      res.status(404).json({
+        status: 404,
+        error: "삭제할 댓글을 찾지 못했습니다.",
+      });
+    }
+    if (String(comment.owner) !== String(_id)) {
+      return res.status(403).json({
+        status: 403,
+        error: "댓글을 삭제할 권한이 없습니다.",
+      });
+    }
+    const writing = await Writing.findById(comment.writing);
+    writing.comments = writing.comments.filter((commentId) => commentId !== id);
+    await writing.save();
+    await Comment.findByIdAndDelete(id);
     return res.status(200).json({
       status: 200,
-      message: "댓글 삭제 성공!",
+      message: "댓글 삭제에 성공했습니다!",
     });
   } catch (error) {
     console.log(error);
@@ -512,13 +512,13 @@ export const postQuestion = async (req, res) => {
 
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
-      console.log(error);
-      return res.status(400).json({
-        status: 400,
-        error: "문의사항을 전달 실패",
+      return res.status(500).json({
+        status: 500,
+        error: "문의사항 전달에 실패했습니다.",
       });
     }
   });
+
   return res.status(200).json({
     status: 200,
     message: "문의사항 전달 성공",
