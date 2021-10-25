@@ -109,9 +109,9 @@ export const watch = async (req, res) => {
       $and: [{ owner: _id }, { writing: writing._id }],
     });
     if (!like) {
-      writing.like = false;
+      writing.isLike = false;
     } else {
-      writing.like = true;
+      writing.isLike = true;
     }
     return res.status(200).json({
       status: 200,
@@ -119,13 +119,10 @@ export const watch = async (req, res) => {
       writing,
     });
   } catch (error) {
-    return (
-      res.status(500),
-      json({
-        status: 500,
-        error: "서버 오류로 인해 게시글 조회에 실패했습니다.",
-      })
-    );
+    return res.status(500).json({
+      status: 500,
+      error: "서버 오류로 인해 게시글 조회에 실패했습니다.",
+    });
   }
 };
 
@@ -153,34 +150,32 @@ export const getEdit = async (req, res) => {
 };
 
 export const postEdit = async (req, res) => {
-  const { id } = req.params;
   const {
     user: { _id },
+    params: { id },
   } = req;
   const { text, hashtag } = req.body;
-  const writing = await Writing.exists({ _id: id });
-  if (writing === undefined) {
-    return res.status(404).json({
-      status: 404,
-      error: "글을 찾을 수 없습니다.",
-    });
-  }
-  if (String(writing.owner) !== String(_id)) {
-    return res.status(403).json({
-      status: 403,
-      error: "권한이 없음",
-    });
-  }
-  const user = await User.findById(_id);
-  if (user === undefined) {
-    return res.status(404).json({
-      status: 404,
-      error: "사용자를 찾을 수 없습니다.",
-    });
-  }
   try {
-    user.writings.pull(id);
-    user.save();
+    const writing = await Writing.exists({ _id: id });
+    if (writing === undefined) {
+      return res.status(404).json({
+        status: 404,
+        error: "글을 찾을 수 없습니다.",
+      });
+    }
+    if (String(writing.owner) !== String(_id)) {
+      return res.status(403).json({
+        status: 403,
+        error: "글을 수정할 권한이 없습니다.",
+      });
+    }
+    const user = await User.findById(_id);
+    if (user === undefined) {
+      return res.status(404).json({
+        status: 404,
+        error: "사용자를 찾을 수 없습니다.",
+      });
+    }
     const newWriting = await Writing.findByIdAndUpdate(
       id,
       {
@@ -189,14 +184,14 @@ export const postEdit = async (req, res) => {
       },
       { new: true }
     );
+    user.writings = user.writings.filter((writingId) => writingId !== id);
     user.writings.push(newWriting._id);
-    user.save();
+    await user.save();
     return res.status(200).json({
       status: 200,
       message: "게시글을 편집하였습니다.",
     });
   } catch (error) {
-    console.log("postEdit", error);
     return res.stauts(400).json({
       status: 400,
       error: "게시글을 편집하지 못했습니다.",
@@ -231,10 +226,9 @@ export const postUpload = async (req, res) => {
       message: "업로드 성공!",
     });
   } catch (error) {
-    console.log("postUpload", error);
     return res.status(500).json({
       status: 500,
-      error: "서버 오류로 인한 업로드 실패",
+      error: "서버 오류로 인해 업로드에 실패했습니다.",
     });
   }
 };
@@ -252,48 +246,51 @@ export const postUploadImgs = (req, res) => {
 };
 
 export const deleteWriting = async (req, res) => {
-  const { id } = req.params;
   const {
     user: { _id },
+    params: { id },
   } = req;
   try {
     const writing = await Writing.findById(id);
     if (writing === undefined) {
-      res.status(404).json({
+      return res.status(404).json({
         status: 404,
-        error: "삭제할 게시물을 찾지 못함",
+        error: "삭제할 게시물을 찾지 못했습니다.",
       });
     }
     if (String(writing.owner) !== String(_id)) {
       return res.status(403).json({
         status: 403,
-        error: "권한이 없음",
+        error: "글을 삭제할 권한이 없습니다.",
       });
     }
     const user = await User.findById(_id);
     if (user === undefined) {
-      res.status(404).json({
+      return res.status(404).json({
         status: 404,
-        error: "사용자를 찾지 못함",
+        error: "사용자를 찾지 못했습니다.",
       });
     }
-
-    user.writings.pull(id);
-    user.save();
+    user.writings = user.writings.filter((writingId) => writingId !== id);
+    await user.save();
+    for (img of writing.imgs) {
+      fs.unlink(`../../uploads${writing.img}`, (err) => {
+        if (err) throw err;
+        return res.status(500).json({
+          status: 500,
+          error: "사진 파일 삭제에 실패했습니다.",
+        });
+      });
+    }
     await Writing.findByIdAndDelete(id);
-    fs.unlink("621ee4f3c5f9daa83cc18bc18a9e8eeb", function (err) {
-      if (err) throw err;
-      console.log("file deleted");
-    });
     return res.status(200).json({
       status: 200,
-      message: "삭제 성공!",
+      message: "게시글 삭제에 성공했습니다.",
     });
   } catch (error) {
-    console.log(error);
     return res.status(400).json({
       status: 400,
-      error: "삭제 실패",
+      error: "게시글 삭제에 실패했습니다.",
     });
   }
 };
@@ -309,21 +306,21 @@ export const postUploadComment = async (req, res) => {
       error: "댓글에 글을 작성해세요.",
     });
   }
-  const writing = await Writing.findById(writingId);
-  if (writing === undefined) {
-    return res.status(404).json({
-      status: 404,
-      error: "댓글을 달 게시물을 찾지 못했습니다.",
-    });
-  }
   try {
+    const writing = await Writing.findById(writingId);
+    if (writing === undefined) {
+      return res.status(404).json({
+        status: 404,
+        error: "댓글을 달 게시물을 찾지 못했습니다.",
+      });
+    }
     const comment = await Comment.create({
       text,
       owner: _id,
       writing,
     });
     writing.comments.push(comment._id);
-    writing.save();
+    await writing.save();
     return res.status(200).json({
       status: 200,
       message: "댓글 작성 성공!",
@@ -353,10 +350,9 @@ export const getEditComment = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       status: 500,
-      error: "서버 오류로 인해 댓글을 찾지 못했습니다."
-    })
+      error: "서버 오류로 인해 댓글을 찾지 못했습니다.",
+    });
   }
-  
 };
 
 export const postEditComment = async (req, res) => {
