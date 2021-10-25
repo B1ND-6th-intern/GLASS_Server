@@ -353,10 +353,9 @@ export const getEditComment = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       status: 500,
-      error: "서버 오류로 인해 댓글을 찾지 못했습니다."
-    })
+      error: "서버 오류로 인해 댓글을 찾지 못했습니다.",
+    });
   }
-  
 };
 
 export const postEditComment = async (req, res) => {
