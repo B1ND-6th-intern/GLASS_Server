@@ -224,6 +224,7 @@ export const postUpload = async (req, res) => {
     return res.status(200).json({
       status: 200,
       message: "업로드 성공!",
+      newVideo,
     });
   } catch (error) {
     return res.status(500).json({
@@ -314,18 +315,21 @@ export const postUploadComment = async (req, res) => {
         error: "댓글을 달 게시물을 찾지 못했습니다.",
       });
     }
-    const comment = await Comment.create({
+    const newComment = await Comment.create({
       text,
       owner: _id,
       writing,
     });
-    writing.comments.push(comment._id);
+    writing.comments.push(newComment._id);
     await writing.save();
+    const comment = await Comment.findById(newComment._id).populate("owner");
     return res.status(200).json({
       status: 200,
       message: "댓글 작성 성공!",
+      comment,
     });
   } catch (error) {
+    console.log(error);
     return res.status(500).json({
       status: 500,
       error: "서버 오류로 인해 댓글 작성에 실패했습니다.",
