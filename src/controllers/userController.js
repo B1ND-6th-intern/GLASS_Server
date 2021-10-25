@@ -23,7 +23,6 @@ export const postJoin = async (req, res) => {
       error: "숫자와 영문자 조합으로 6~15자리를 사용해야 합니다.",
     });
   }
-
   let grade, classNumber, stuNumber;
   if (isAgree === false) {
     return res.status(400).json({
@@ -319,24 +318,24 @@ export const postEditAvatar = async (req, res) => {
     user: { _id },
     file: { filename },
   } = req;
-  const user = await User.findById(_id);
   try {
+    const user = await User.findById(_id);
     user.avatar = `/avatars/${filename}`;
     await user.save();
+    const newavatar = filename;
+    return res.status(200).json({
+      status: 200,
+      message: "회원 프로필 사진 수정 성공",
+      newavatar: `/avatars/${newavatar}`,
+      // Member avatar modification successful!
+    });
   } catch (error) {
-    return res.status(400).json({
-      status: 400,
-      error: `회원 프로필 사진 수정 실패 : ${error}`,
+    return res.status(500).json({
+      status: 500,
+      error: `회원 프로필 사진 수정 실패했습니다.`,
       // Member avatar modification failed!
     });
   }
-  const newavatar = filename;
-  return res.status(200).json({
-    status: 200,
-    message: "회원 프로필 사진 수정 성공",
-    newavatar: `/avatars/${newavatar}`,
-    // Member avatar modification successful!
-  });
 };
 
 export const postChangePassword = async (req, res) => {
@@ -353,7 +352,7 @@ export const postChangePassword = async (req, res) => {
       // The current password is incorrect.
     });
   }
-  var passwordRules = /^[a-zA-Z0-9]{6,15}$/;
+  const passwordRules = /^[a-zA-Z0-9]{6,15}$/;
   if (!passwordRules.test(newPassword)) {
     return res.status(400).json({
       status: 400,
