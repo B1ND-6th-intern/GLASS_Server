@@ -23,7 +23,6 @@ export const postJoin = async (req, res) => {
       error: "숫자와 영문자 조합으로 6~15자리를 사용해야 합니다.",
     });
   }
-
   let grade, classNumber, stuNumber;
   if (isAgree === false) {
     return res.status(400).json({
@@ -48,15 +47,15 @@ export const postJoin = async (req, res) => {
       // Password is different
     });
   }
-  const exists = await User.exists({ email: email });
-  if (exists !== false) {
-    return res.status(400).json({
-      status: 400,
-      error: "이 email은 이미 사용되고 있습니다. 다른 email로 바꿔주세요.",
-      // This email is already in use, Please change to another email.
-    });
-  }
   try {
+    const exists = await User.exists({ email: email });
+    if (exists !== false) {
+      return res.status(400).json({
+        status: 400,
+        error: "이 email은 이미 사용되고 있습니다. 다른 email로 바꿔주세요.",
+        // This email is already in use, Please change to another email.
+      });
+    }
     joinedUser = await User.create({
       email,
       password,
@@ -160,7 +159,6 @@ export const getEmailAuthorization = async (req, res) => {
       });
     }
   });
-
   joinedUser.MailerConfilm = true;
   return res.status(200).json({
     sendCount: authorization.sendCount,
@@ -319,24 +317,24 @@ export const postEditAvatar = async (req, res) => {
     user: { _id },
     file: { filename },
   } = req;
-  const user = await User.findById(_id);
   try {
+    const user = await User.findById(_id);
     user.avatar = `/avatars/${filename}`;
     await user.save();
+    const newavatar = filename;
+    return res.status(200).json({
+      status: 200,
+      message: "회원 프로필 사진 수정 성공",
+      newavatar: `/avatars/${newavatar}`,
+      // Member avatar modification successful!
+    });
   } catch (error) {
-    return res.status(400).json({
-      status: 400,
-      error: `회원 프로필 사진 수정 실패 : ${error}`,
+    return res.status(500).json({
+      status: 500,
+      error: `회원 프로필 사진 수정 실패했습니다.`,
       // Member avatar modification failed!
     });
   }
-  const newavatar = filename;
-  return res.status(200).json({
-    status: 200,
-    message: "회원 프로필 사진 수정 성공",
-    newavatar: `/avatars/${newavatar}`,
-    // Member avatar modification successful!
-  });
 };
 
 export const postChangePassword = async (req, res) => {
@@ -353,7 +351,7 @@ export const postChangePassword = async (req, res) => {
       // The current password is incorrect.
     });
   }
-  var passwordRules = /^[a-zA-Z0-9]{6,15}$/;
+  const passwordRules = /^[a-zA-Z0-9]{6,15}$/;
   if (!passwordRules.test(newPassword)) {
     return res.status(400).json({
       status: 400,
@@ -378,18 +376,25 @@ export const postChangePassword = async (req, res) => {
 
 export const see = async (req, res) => {
   const { id } = req.params;
-  const user = await User.findById(id).populate("writings");
-  if (user === undefined) {
-    return res.status(404).json({
-      status: 404,
-      error: "유저를 찾지 못했습니다.",
-      // User not found
+  try {
+    const user = await User.findById(id).populate("writings");
+    if (user === undefined) {
+      return res.status(404).json({
+        status: 404,
+        error: "유저를 찾지 못했습니다.",
+        // User not found
+      });
+    }
+    return res.status(200).json({
+      status: 200,
+      user,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: 500,
+      error: "서버 오류로 인해 유저 찾기에 실패했습니다.",
     });
   }
-  return res.status(200).json({
-    status: 200,
-    user,
-  });
 };
 
 export const search = async (req, res) => {
