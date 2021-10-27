@@ -48,7 +48,7 @@ export const getInfiniteScrollPosts = async (req, res) => {
         message: "무한 스크롤 끝에 다다랐습니다.",
       });
     }
-    const writing = writings[index];
+    let writing = writings[index];
     const like = await Like.findOne({
       $and: [{ owner: _id }, { writing: writing._id }],
     });
@@ -56,6 +56,11 @@ export const getInfiniteScrollPosts = async (req, res) => {
       writing.isLike = false;
     } else {
       writing.isLike = true;
+    }
+    if (String(writing.owner._id) === _id) {
+      writing.isOwner = true;
+    } else {
+      writing.isOwner = false;
     }
     return res.status(200).json({
       status: 200,
@@ -80,7 +85,7 @@ export const getPopularPosts = async (req, res) => {
           path: "owner",
         },
       })
-      .sort({ like: "desc" });
+      .sort({ likeCount: "desc" });
     return res.status(200).json({
       status: 200,
       message: "메인 불러오기에 성공했습니다.",
@@ -204,8 +209,7 @@ export const postUpload = async (req, res) => {
     user: { _id },
   } = req;
   const { text, hashtags, imgs } = req.body;
-  console.log(imgs);
-  if (imgs === null) {
+  if (imgs.length === 0) {
     return res.status(400).json({
       status: 400,
       error: "사진을 첨부해주세요.",
@@ -289,9 +293,10 @@ export const deleteWriting = async (req, res) => {
       message: "게시글 삭제에 성공했습니다.",
     });
   } catch (error) {
-    return res.status(400).json({
-      status: 400,
-      error: "게시글 삭제에 실패했습니다.",
+    console.log(error);
+    return res.status(500).json({
+      status: 500,
+      error: "서버 오류로 인해 게시글 삭제에 실패했습니다.",
     });
   }
 };

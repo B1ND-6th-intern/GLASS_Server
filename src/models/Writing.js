@@ -9,6 +9,7 @@ const writingSchema = new mongoose.Schema({
   comments: [{ type: mongoose.Types.ObjectId, ref: "Comment" }],
   imgs: [{ type: String, required: true }],
   isLike: { type: Boolean, default: false },
+  isOwner: { type: Boolean, default: false },
 });
 
 const Writing = mongoose.model("Writing", writingSchema);
