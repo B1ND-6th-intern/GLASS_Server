@@ -190,7 +190,9 @@ export const postEdit = async (req, res) => {
       },
       { new: true }
     );
-    user.writings = user.writings.filter((writingId) => writingId !== id);
+    user.writings = user.writings.filter(
+      (writingId) => String(writingId) !== id
+    );
     user.writings.push(newWriting._id);
     await user.save();
     return res.status(200).json({
@@ -277,7 +279,9 @@ export const deleteWriting = async (req, res) => {
         error: "사용자를 찾지 못했습니다.",
       });
     }
-    user.writings = user.writings.filter((writingId) => writingId !== id);
+    user.writings = user.writings.filter(
+      (writingId) => String(writingId) !== id
+    );
     await user.save();
     for (const img of writing.imgs) {
       fs.unlink(`./uploads${img}`, (error) => {
@@ -383,7 +387,9 @@ export const postEditComment = async (req, res) => {
       });
     }
     const writing = await Writing.findById(comment.writing);
-    writing.comments = writing.comments.filter((commentId) => commentId !== id);
+    writing.comments = writing.comments.filter(
+      (commentId) => String(commentId) !== id
+    );
     await writing.save();
     const newComment = await Comment.findByIdAndUpdate(
       id,
@@ -426,7 +432,9 @@ export const deleteComment = async (req, res) => {
       });
     }
     const writing = await Writing.findById(comment.writing);
-    writing.comments = writing.comments.filter((commentId) => commentId !== id);
+    writing.comments = writing.comments.filter(
+      (commentId) => String(commentId) !== id
+    );
     await writing.save();
     await Comment.findByIdAndDelete(id);
     return res.status(200).json({
