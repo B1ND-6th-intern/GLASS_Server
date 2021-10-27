@@ -52,15 +52,16 @@ export const getInfiniteScrollPosts = async (req, res) => {
     const like = await Like.findOne({
       $and: [{ owner: _id }, { writing: writing._id }],
     });
-    if (!like) {
-      writing.isLike = false;
-    } else {
+    if (like) {
       writing.isLike = true;
     }
     if (String(writing.owner._id) === _id) {
       writing.isOwner = true;
-    } else {
-      writing.isOwner = false;
+    }
+    for (const comment of writing.comments) {
+      if (String(comment.owner._id) === _id) {
+        comment.isOwner = true;
+      }
     }
     return res.status(200).json({
       status: 200,
@@ -278,13 +279,11 @@ export const deleteWriting = async (req, res) => {
     }
     user.writings = user.writings.filter((writingId) => writingId !== id);
     await user.save();
-    for (img of writing.imgs) {
-      fs.unlink(`../../uploads${writing.img}`, (err) => {
-        if (err) throw err;
-        return res.status(500).json({
-          status: 500,
-          error: "사진 파일 삭제에 실패했습니다.",
-        });
+    for (const img of writing.imgs) {
+      fs.unlink(`./uploads${img}`, (error) => {
+        if (error) {
+          console.log(error);
+        }
       });
     }
     await Writing.findByIdAndDelete(id);
@@ -293,7 +292,6 @@ export const deleteWriting = async (req, res) => {
       message: "게시글 삭제에 성공했습니다.",
     });
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       status: 500,
       error: "서버 오류로 인해 게시글 삭제에 실패했습니다.",
