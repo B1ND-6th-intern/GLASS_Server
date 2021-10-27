@@ -9,6 +9,7 @@ const commentSchema = new mongoose.Schema({
     ref: "Writing",
   },
   createdAt: { type: Date, required: true, default: Date.now },
+  isOwner: { type: Boolean, default: false },
 });
 
 const Comment = mongoose.model("Comment", commentSchema);
