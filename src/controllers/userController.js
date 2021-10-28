@@ -87,6 +87,12 @@ export const postJoin = async (req, res) => {
 };
 
 export const getEmailAuthorization = async (req, res) => {
+  if (joinedUser === undefined) {
+    return res.status(400).json({
+      status: 400,
+      error: "회원가입을 다시 해 주세요",
+    });
+  }
   if (joinedUser === null || joinedUser.isValid === true) {
     return res.status(400).json({
       status: 400,
