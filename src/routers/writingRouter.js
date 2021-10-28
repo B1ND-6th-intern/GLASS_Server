@@ -12,7 +12,7 @@ import { imgsUpload, authenticateAccessToken } from "../middlewares";
 
 const writingRouter = express.Router();
 
-writingRouter.get("/:id([0-9a-f]{24})", watch);
+writingRouter.get("/:id([0-9a-f]{24})", authenticateAccessToken, watch);
 writingRouter
   .route("/edit/:id([0-9a-f]{24})")
   .all(authenticateAccessToken)
