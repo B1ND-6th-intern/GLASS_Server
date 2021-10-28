@@ -9,7 +9,7 @@
     "url": "git+https://github.com/B1ND-6th-intern/GLASS_Server.git"
   },
   "scripts": {
-    "dev": "nodemon  --experimental-modules --es-module-specifier-resolution=node src/init.js"
+    "start": "nodemon  --experimental-modules --es-module-specifier-resolution=node src/init.js"
   },
   "author": "",
   "license": "MIT",

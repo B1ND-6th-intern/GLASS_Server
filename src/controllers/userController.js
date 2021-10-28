@@ -243,7 +243,7 @@ export const postLogin = async (req, res) => {
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ email });
-    if (user === undefined) {
+    if (!user) {
       return res.status(400).json({
         status: 400,
         error: "이 Email을 가진 계정이 존재하지 않습니다.",
@@ -284,7 +284,7 @@ export const postLogin = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       status: 500,
-      message: "로그인 실패",
+      error: "로그인 실패",
     });
   }
 };
@@ -294,22 +294,35 @@ export const postEdit = async (req, res) => {
     user: { _id },
     body: { name, introduction },
   } = req;
-  const updatedUser = await User.findByIdAndUpdate(
-    _id,
-    {
+  if (name.length > 10) {
+    return res.status(400).json({
+      status: 400,
+      error: "이름은 10글자 이내로 작성해주세요.",
+    });
+  }
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      _id,
+      {
+        name,
+        introduction,
+      },
+      { new: true }
+    );
+    req.user = updatedUser;
+    return res.status(200).json({
+      status: 200,
+      message: "회원정보 수정을 성공했습니다.",
       name,
       introduction,
-    },
-    { new: true }
-  );
-  req.user = updatedUser;
-  return res.status(200).json({
-    status: 200,
-    message: "회원정보 수정 성공",
-    name,
-    introduction,
-    // Member information modification successful!
-  });
+      // Member information modification successful!
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: 500,
+      error: "서버 오류로 인해 회원정보 수정에 실패했습니다.",
+    });
+  }
 };
 
 export const postEditAvatar = async (req, res) => {

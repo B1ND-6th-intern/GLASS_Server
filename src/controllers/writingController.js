@@ -48,14 +48,20 @@ export const getInfiniteScrollPosts = async (req, res) => {
         message: "무한 스크롤 끝에 다다랐습니다.",
       });
     }
-    const writing = writings[index];
+    let writing = writings[index];
     const like = await Like.findOne({
       $and: [{ owner: _id }, { writing: writing._id }],
     });
-    if (!like) {
-      writing.isLike = false;
-    } else {
+    if (like) {
       writing.isLike = true;
+    }
+    if (String(writing.owner._id) === _id) {
+      writing.isOwner = true;
+    }
+    for (const comment of writing.comments) {
+      if (String(comment.owner._id) === _id) {
+        comment.isOwner = true;
+      }
     }
     return res.status(200).json({
       status: 200,
@@ -80,11 +86,11 @@ export const getPopularPosts = async (req, res) => {
           path: "owner",
         },
       })
-      .sort({ like: "desc" });
+      .sort({ likeCount: "desc" });
     return res.status(200).json({
       status: 200,
       message: "메인 불러오기에 성공했습니다.",
-      writings,
+      writings: writings.slice(0, 3),
     });
   } catch (error) {
     return res.status(500).json({
@@ -109,9 +115,9 @@ export const watch = async (req, res) => {
       $and: [{ owner: _id }, { writing: writing._id }],
     });
     if (!like) {
-      writing.like = false;
+      writing.isLike = false;
     } else {
-      writing.like = true;
+      writing.isLike = true;
     }
     return res.status(200).json({
       status: 200,
@@ -119,13 +125,10 @@ export const watch = async (req, res) => {
       writing,
     });
   } catch (error) {
-    return (
-      res.status(500),
-      json({
-        status: 500,
-        error: "서버 오류로 인해 게시글 조회에 실패했습니다.",
-      })
-    );
+    return res.status(500).json({
+      status: 500,
+      error: "서버 오류로 인해 게시글 조회에 실패했습니다.",
+    });
   }
 };
 
@@ -153,34 +156,32 @@ export const getEdit = async (req, res) => {
 };
 
 export const postEdit = async (req, res) => {
-  const { id } = req.params;
   const {
     user: { _id },
+    params: { id },
   } = req;
   const { text, hashtag } = req.body;
-  const writing = await Writing.exists({ _id: id });
-  if (writing === undefined) {
-    return res.status(404).json({
-      status: 404,
-      error: "글을 찾을 수 없습니다.",
-    });
-  }
-  if (String(writing.owner) !== String(_id)) {
-    return res.status(403).json({
-      status: 403,
-      error: "권한이 없음",
-    });
-  }
-  const user = await User.findById(_id);
-  if (user === undefined) {
-    return res.status(404).json({
-      status: 404,
-      error: "사용자를 찾을 수 없습니다.",
-    });
-  }
   try {
-    user.writings.pull(id);
-    user.save();
+    const writing = await Writing.exists({ _id: id });
+    if (writing === undefined) {
+      return res.status(404).json({
+        status: 404,
+        error: "글을 찾을 수 없습니다.",
+      });
+    }
+    if (String(writing.owner) !== String(_id)) {
+      return res.status(403).json({
+        status: 403,
+        error: "글을 수정할 권한이 없습니다.",
+      });
+    }
+    const user = await User.findById(_id);
+    if (user === undefined) {
+      return res.status(404).json({
+        status: 404,
+        error: "사용자를 찾을 수 없습니다.",
+      });
+    }
     const newWriting = await Writing.findByIdAndUpdate(
       id,
       {
@@ -189,14 +190,16 @@ export const postEdit = async (req, res) => {
       },
       { new: true }
     );
+    user.writings = user.writings.filter(
+      (writingId) => String(writingId) !== id
+    );
     user.writings.push(newWriting._id);
-    user.save();
+    await user.save();
     return res.status(200).json({
       status: 200,
       message: "게시글을 편집하였습니다.",
     });
   } catch (error) {
-    console.log("postEdit", error);
     return res.stauts(400).json({
       status: 400,
       error: "게시글을 편집하지 못했습니다.",
@@ -209,8 +212,7 @@ export const postUpload = async (req, res) => {
     user: { _id },
   } = req;
   const { text, hashtags, imgs } = req.body;
-  console.log(imgs);
-  if (imgs === null) {
+  if (imgs.length === 0) {
     return res.status(400).json({
       status: 400,
       error: "사진을 첨부해주세요.",
@@ -229,12 +231,12 @@ export const postUpload = async (req, res) => {
     return res.status(200).json({
       status: 200,
       message: "업로드 성공!",
+      newVideo,
     });
   } catch (error) {
-    console.log("postUpload", error);
     return res.status(500).json({
       status: 500,
-      error: "서버 오류로 인한 업로드 실패",
+      error: "서버 오류로 인해 업로드에 실패했습니다.",
     });
   }
 };
@@ -252,48 +254,51 @@ export const postUploadImgs = (req, res) => {
 };
 
 export const deleteWriting = async (req, res) => {
-  const { id } = req.params;
   const {
     user: { _id },
+    params: { id },
   } = req;
   try {
     const writing = await Writing.findById(id);
     if (writing === undefined) {
-      res.status(404).json({
+      return res.status(404).json({
         status: 404,
-        error: "삭제할 게시물을 찾지 못함",
+        error: "삭제할 게시물을 찾지 못했습니다.",
       });
     }
     if (String(writing.owner) !== String(_id)) {
       return res.status(403).json({
         status: 403,
-        error: "권한이 없음",
+        error: "글을 삭제할 권한이 없습니다.",
       });
     }
     const user = await User.findById(_id);
     if (user === undefined) {
-      res.status(404).json({
+      return res.status(404).json({
         status: 404,
-        error: "사용자를 찾지 못함",
+        error: "사용자를 찾지 못했습니다.",
       });
     }
-
-    user.writings.pull(id);
-    user.save();
+    user.writings = user.writings.filter(
+      (writingId) => String(writingId) !== id
+    );
+    await user.save();
+    for (const img of writing.imgs) {
+      fs.unlink(`./uploads${img}`, (error) => {
+        if (error) {
+          console.log(error);
+        }
+      });
+    }
     await Writing.findByIdAndDelete(id);
-    fs.unlink(id, function (err) {
-      if (err) throw err;
-      console.log("file deleted");
-    });
     return res.status(200).json({
       status: 200,
-      message: "삭제 성공!",
+      message: "게시글 삭제에 성공했습니다.",
     });
   } catch (error) {
-    console.log(error);
-    return res.status(400).json({
-      status: 400,
-      error: "삭제 실패",
+    return res.status(500).json({
+      status: 500,
+      error: "서버 오류로 인해 게시글 삭제에 실패했습니다.",
     });
   }
 };
@@ -309,26 +314,29 @@ export const postUploadComment = async (req, res) => {
       error: "댓글에 글을 작성해세요.",
     });
   }
-  const writing = await Writing.findById(writingId);
-  if (writing === undefined) {
-    return res.status(404).json({
-      status: 404,
-      error: "댓글을 달 게시물을 찾지 못했습니다.",
-    });
-  }
   try {
-    const comment = await Comment.create({
+    const writing = await Writing.findById(writingId);
+    if (writing === undefined) {
+      return res.status(404).json({
+        status: 404,
+        error: "댓글을 달 게시물을 찾지 못했습니다.",
+      });
+    }
+    const newComment = await Comment.create({
       text,
       owner: _id,
       writing,
     });
-    writing.comments.push(comment._id);
-    writing.save();
+    writing.comments.push(newComment._id);
+    await writing.save();
+    const comment = await Comment.findById(newComment._id).populate("owner");
     return res.status(200).json({
       status: 200,
       message: "댓글 작성 성공!",
+      comment,
     });
   } catch (error) {
+    console.log(error);
     return res.status(500).json({
       status: 500,
       error: "서버 오류로 인해 댓글 작성에 실패했습니다.",
@@ -379,7 +387,9 @@ export const postEditComment = async (req, res) => {
       });
     }
     const writing = await Writing.findById(comment.writing);
-    writing.comments = writing.comments.filter((commentId) => commentId !== id);
+    writing.comments = writing.comments.filter(
+      (commentId) => String(commentId) !== id
+    );
     await writing.save();
     const newComment = await Comment.findByIdAndUpdate(
       id,
@@ -422,7 +432,9 @@ export const deleteComment = async (req, res) => {
       });
     }
     const writing = await Writing.findById(comment.writing);
-    writing.comments = writing.comments.filter((commentId) => commentId !== id);
+    writing.comments = writing.comments.filter(
+      (commentId) => String(commentId) !== id
+    );
     await writing.save();
     await Comment.findByIdAndDelete(id);
     return res.status(200).json({
