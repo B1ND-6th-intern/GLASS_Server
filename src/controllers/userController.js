@@ -243,7 +243,7 @@ export const postLogin = async (req, res) => {
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ email });
-    if (!user) {
+    if (user === null) {
       return res.status(400).json({
         status: 400,
         error: "이 Email을 가진 계정이 존재하지 않습니다.",

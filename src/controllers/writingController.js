@@ -104,7 +104,14 @@ export const watch = async (req, res) => {
   const { _id } = req.user;
   const { id } = req.params;
   try {
-    const writing = await Writing.findById(id);
+    const writing = await Writing.findById(id)
+      .populate("owner")
+      .populate({
+        path: "comments",
+        populate: {
+          path: "owner",
+        },
+      });
     if (writing === undefined) {
       return res.status(404).json({
         status: 404,
