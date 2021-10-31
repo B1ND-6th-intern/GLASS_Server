@@ -10,7 +10,7 @@ import { authenticateAccessToken } from "../middlewares";
 
 const rootRouter = express.Router();
 
-rootRouter.get("/posts", getPosts);
+rootRouter.get("/posts", authenticateAccessToken, getPosts);
 rootRouter.get("/posts/popular", getPopularPosts);
 rootRouter.get(
   "/posts/:index",

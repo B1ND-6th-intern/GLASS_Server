@@ -6,6 +6,7 @@ import fs from "fs";
 import nodemailer from "nodemailer";
 
 export const getPosts = async (req, res) => {
+  const { _id } = req.user;
   try {
     const writings = await Writing.find({})
       .populate("owner")
@@ -16,6 +17,17 @@ export const getPosts = async (req, res) => {
         },
       })
       .sort({ _id: "desc" });
+    for (const writing of writings) {
+      const like = await Like.findOne({
+        $and: [{ owner: _id }, { writing: writing._id }],
+      });
+      if (like) {
+        writing.isLike = true;
+      }
+      if (String(writing.owner._id) === _id) {
+        writing.isOwner = true;
+      }
+    }
     return res.status(200).json({
       status: 200,
       message: "메인 불러오기에 성공했습니다.",
@@ -112,7 +124,7 @@ export const watch = async (req, res) => {
           path: "owner",
         },
       });
-    if (writing === undefined) {
+    if (writing === null) {
       return res.status(404).json({
         status: 404,
         message: "글을 찾을 수 없습니다.",
@@ -121,10 +133,11 @@ export const watch = async (req, res) => {
     const like = await Like.findOne({
       $and: [{ owner: _id }, { writing: writing._id }],
     });
-    if (!like) {
-      writing.isLike = false;
-    } else {
+    if (like) {
       writing.isLike = true;
+    }
+    if (String(writing.owner._id) === _id) {
+      writing.isOwner = true;
     }
     return res.status(200).json({
       status: 200,
@@ -310,6 +323,26 @@ export const deleteWriting = async (req, res) => {
   }
 };
 
+export const deleteOneImg = async (req, res) => {
+  const { img } = req.body;
+  try {
+    fs.unlink(`./uploads${img}`, (error) => {
+      if (error) {
+        console.log(error);
+      }
+    });
+    return res.status(200).json({
+      status: 200,
+      message: "사진 삭제에 성공했습니다.",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: 500,
+      error: "서버 오류로 인해 이미지 삭제에 실패했습니다.",
+    });
+  }
+};
+
 export const postUploadComment = async (req, res) => {
   const {
     user: { _id },
@@ -474,6 +507,9 @@ export const registerWritingLike = async (req, res) => {
     if (like) {
       await Like.findByIdAndDelete(like);
       writing.likeCount--;
+      if (writing.likeCount < 0) {
+        writing.likeCount = 0;
+      }
       await writing.save();
     } else {
       await Like.create({
