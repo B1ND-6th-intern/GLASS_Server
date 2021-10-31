@@ -7,6 +7,7 @@ import {
   deleteWriting,
   registerWritingLike,
   postUploadImgs,
+  deleteOneImg,
 } from "../controllers/writingController";
 import { imgsUpload, authenticateAccessToken } from "../middlewares";
 
@@ -23,6 +24,7 @@ writingRouter.delete(
   authenticateAccessToken,
   deleteWriting
 );
+writingRouter.post("/delete/img", deleteOneImg);
 writingRouter.get(
   "/like/:id([0-9a-f]{24})",
   authenticateAccessToken,

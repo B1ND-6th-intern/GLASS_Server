@@ -112,7 +112,7 @@ export const watch = async (req, res) => {
           path: "owner",
         },
       });
-    if (writing === undefined) {
+    if (writing === null) {
       return res.status(404).json({
         status: 404,
         message: "글을 찾을 수 없습니다.",
@@ -125,6 +125,9 @@ export const watch = async (req, res) => {
       writing.isLike = false;
     } else {
       writing.isLike = true;
+    }
+    if (String(writing.owner._id) === _id) {
+      writing.isOwner = true;
     }
     return res.status(200).json({
       status: 200,
@@ -306,6 +309,26 @@ export const deleteWriting = async (req, res) => {
     return res.status(500).json({
       status: 500,
       error: "서버 오류로 인해 게시글 삭제에 실패했습니다.",
+    });
+  }
+};
+
+export const deleteOneImg = async (req, res) => {
+  const { img } = req.body;
+  try {
+    fs.unlink(`./uploads${img}`, (error) => {
+      if (error) {
+        console.log(error);
+      }
+    });
+    return res.status(200).json({
+      status: 200,
+      message: "사진 삭제에 성공했습니다.",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: 500,
+      error: "서버 오류로 인해 이미지 삭제에 실패했습니다.",
     });
   }
 };
