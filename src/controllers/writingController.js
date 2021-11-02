@@ -239,19 +239,19 @@ export const postUpload = async (req, res) => {
     });
   }
   try {
-    const newVideo = await Writing.create({
+    const newWriting = await Writing.create({
       text,
       owner: _id,
       hashtags,
       imgs,
     });
     const user = await User.findById(_id);
-    await user.writings.push(newVideo._id);
+    await user.writings.push(newWriting._id);
     await user.save();
     return res.status(200).json({
       status: 200,
       message: "업로드 성공!",
-      newVideo,
+      newWriting,
     });
   } catch (error) {
     return res.status(500).json({
@@ -532,25 +532,29 @@ export const registerWritingLike = async (req, res) => {
 };
 
 export const postQuestion = async (req, res) => {
-  const { name, email, title, type, getquestion } = req.body;
-  const sendName = "glassfromb1nd@gmail.com";
-  const password = process.env.EMAIL_PASSWORD;
-  const recName = email;
+  const { _id } = req.user;
+  const { question } = req.body;
+  console.log(req.user);
+  try {
+    const user = await User.findById(_id);
+    const sendName = "glassfromb1nd@gmail.com";
+    const password = process.env.EMAIL_PASSWORD;
+    const recName = user.email;
 
-  const transporter = nodemailer.createTransport({
-    secure: false,
-    service: "Gmail",
-    auth: {
-      user: sendName,
-      pass: password,
-    },
-  });
+    const transporter = nodemailer.createTransport({
+      secure: false,
+      service: "Gmail",
+      auth: {
+        user: sendName,
+        pass: password,
+      },
+    });
 
-  const mailOptions = {
-    from: sendName,
-    to: recName,
-    subject: "GLASS 문의사항 답변",
-    text: `
+    const mailOptions = {
+      from: sendName,
+      to: recName,
+      subject: "GLASS 문의사항 답변",
+      text: `
           안녕하세요 :) 저희 GLASS를 이용해주셔서 감사합니다.
           문의주신 사항에 답변을 드리겠습니다.
   
@@ -561,24 +565,27 @@ export const postQuestion = async (req, res) => {
   
           - B1ND GLASS 팀 -
           
-          - 접수자 : ${name}
-          - 이메일 : ${email}
-          - 제목 : ${title}
-          - 문의 종류 : ${type}
-          - 문의 사항 : ${getquestion}`,
-  };
+          - 접수자 : ${user.name}
+          - 이메일 : ${user.email}
+          - 문의 사항 : ${question}`,
+    };
 
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      return res.status(500).json({
-        status: 500,
-        error: "문의사항 전달에 실패했습니다.",
-      });
-    }
-  });
-
-  return res.status(200).json({
-    status: 200,
-    message: "문의사항 전달 성공",
-  });
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        return res.status(500).json({
+          status: 500,
+          error: "문의사항 전달에 실패했습니다.",
+        });
+      }
+    });
+    return res.status(200).json({
+      status: 200,
+      message: "문의사항 전달 성공",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: 500,
+      error: "서버 오류로 인해 문의사항 전달에 실패했습니다.",
+    });
+  }
 };
