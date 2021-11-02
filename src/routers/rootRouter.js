@@ -20,6 +20,6 @@ rootRouter.get(
 rootRouter.post("/join", postJoin);
 rootRouter.post("/login", postLogin);
 rootRouter.get("/search", search);
-rootRouter.post("/question", postQuestion);
+rootRouter.post("/question", authenticateAccessToken, postQuestion);
 
 export default rootRouter;
