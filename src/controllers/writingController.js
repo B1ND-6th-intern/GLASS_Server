@@ -534,7 +534,6 @@ export const registerWritingLike = async (req, res) => {
 export const postQuestion = async (req, res) => {
   const { _id } = req.user;
   const { question } = req.body;
-  console.log(req.user);
   try {
     const user = await User.findById(_id);
     const sendName = "glassfromb1nd@gmail.com";
@@ -580,7 +579,8 @@ export const postQuestion = async (req, res) => {
     });
     return res.status(200).json({
       status: 200,
-      message: "문의사항 전달 성공",
+      message:
+        "문의사항을 전달했습니다. 빠른 시일 내에 해당 계정의 이메일로 답변을 전송해드리겠습니다.",
     });
   } catch (error) {
     return res.status(500).json({
