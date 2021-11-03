@@ -31,6 +31,12 @@ export const postJoin = async (req, res) => {
       // Please agree to the collection of personal information.
     });
   }
+  if (permission < -1 || permission > 2) {
+    return res.status(400).json({
+      status: 400,
+      error: "permission 값이 옳지 않습니다.",
+    });
+  }
   if (permission === 0) {
     grade = req.body.grade;
     classNumber = req.body.classNumber;
@@ -304,6 +310,12 @@ export const postEdit = async (req, res) => {
     return res.status(400).json({
       status: 400,
       error: "이름은 10글자 이내로 작성해주세요.",
+    });
+  }
+  if (introduction.length > 30) {
+    return res.status(400).json({
+      status: 400,
+      error: "소개글은 30글자 이내로 작성해주세요.",
     });
   }
   try {

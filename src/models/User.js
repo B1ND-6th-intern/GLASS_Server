@@ -4,14 +4,14 @@ import mongoose from "mongoose";
 const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  name: { type: String, required: true },
+  name: { type: String, required: true, maxLength: 10 },
   grade: { type: Number },
   classNumber: { type: Number },
   stuNumber: { type: Number },
   isValid: { type: Boolean, default: false },
   permission: { type: Number, required: true }, // 0 학생, 1 학부모, 2 교직원
   writings: [{ type: mongoose.Types.ObjectId, ref: "Writing" }],
-  introduction: { type: String, default: "안녕하세요 :)" },
+  introduction: { type: String, default: "안녕하세요 :)", maxLength: 30 },
   avatar: { type: String, default: "" },
 });
 

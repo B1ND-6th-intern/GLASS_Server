@@ -181,6 +181,12 @@ export const postEdit = async (req, res) => {
     params: { id },
   } = req;
   const { text, hashtag } = req.body;
+  if (text.length > 65) {
+    return res.status(400).json({
+      status: 400,
+      error: "게시글 본문은 최대 65글자까지만 작성 가능합니다.",
+    });
+  }
   try {
     const writing = await Writing.exists({ _id: id });
     if (writing === undefined) {
@@ -236,6 +242,12 @@ export const postUpload = async (req, res) => {
     return res.status(400).json({
       status: 400,
       error: "사진을 첨부해주세요.",
+    });
+  }
+  if (text.length > 65) {
+    return res.status(400).json({
+      status: 400,
+      error: "게시글 본문은 최대 65글자까지만 작성 가능합니다.",
     });
   }
   try {
@@ -354,6 +366,12 @@ export const postUploadComment = async (req, res) => {
       error: "댓글에 글을 작성해세요.",
     });
   }
+  if (text.length > 30) {
+    return res.status(400).json({
+      status: 400,
+      error: "댓글은 최대 30글자까지만 작성 가능합니다.",
+    });
+  }
   try {
     const writing = await Writing.findById(writingId);
     if (writing === undefined) {
@@ -412,6 +430,12 @@ export const postEditComment = async (req, res) => {
     params: { id }, // comment의 id
   } = req;
   const { text, writing } = req.body;
+  if (text.length > 30) {
+    return res.status(400).json({
+      status: 400,
+      error: "댓글은 최대 30글자까지만 작성 가능합니다.",
+    });
+  }
   try {
     const comment = await Comment.findById(id);
     if (comment === undefined) {
