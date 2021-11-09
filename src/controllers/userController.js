@@ -306,7 +306,7 @@ export const postEdit = async (req, res) => {
     user: { _id },
     body: { name, introduction },
   } = req;
-  if (name.length > 10) {
+  if (name.length > 10 || name.length < 1) {
     return res.status(400).json({
       status: 400,
       error: "이름은 10글자 이내로 작성해주세요.",
