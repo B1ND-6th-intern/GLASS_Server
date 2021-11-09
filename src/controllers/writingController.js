@@ -258,6 +258,12 @@ export const postUpload = async (req, res) => {
       imgs,
     });
     const user = await User.findById(_id);
+    if (user.permission == 1) {
+      return res.status(400).json({
+        status: 400,
+        error: "아쉽지만 학부모님 계정으로는 게시글을 업로드할 수 없습니다.",
+      });
+    }
     await user.writings.push(newWriting._id);
     await user.save();
     return res.status(200).json({
@@ -274,15 +280,22 @@ export const postUpload = async (req, res) => {
 };
 
 export const postUploadImgs = (req, res) => {
-  const urlArr = new Array();
-  for (const file of req.files) {
-    urlArr.push(`/imgs/${file.filename}`);
+  try {
+    const urlArr = new Array();
+    for (const file of req.files) {
+      urlArr.push(`/imgs/${file.filename}`);
+    }
+    return res.status(200).json({
+      status: 200,
+      message: "이미지를 업로드했습니다.",
+      jsonUrl: urlArr,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: 500,
+      error: "서버 오류로 인해 이미지 업로드에 실패했습니다.",
+    });
   }
-  return res.status(200).json({
-    status: 200,
-    message: "이미지를 업로드했습니다.",
-    jsonUrl: urlArr,
-  });
 };
 
 export const deleteWriting = async (req, res) => {

@@ -322,7 +322,7 @@ export const postEdit = async (req, res) => {
     user: { _id },
     body: { name, introduction },
   } = req;
-  if (name.length > 10 && name.length < 3) {
+  if (name.length > 10 || name.length < 1) {
     if (name.match(pattern)) {
       return res.status(400).json({
         status: 400,
