@@ -328,7 +328,7 @@ export const postEdit = async (req, res) => {
       error: "이름을 공백을 제외한 2~10글자 이내로 작성해주세요.",
     });
   }
-  if (name.length > 10 && name.length < 3) {
+  if (name.length > 10 || name.length < 3) {
     if (name.match(pattern)) {
       return res.status(400).json({
         status: 400,
