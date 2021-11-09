@@ -373,7 +373,7 @@ export const postUploadComment = async (req, res) => {
     user: { _id },
   } = req;
   const { text, writingId } = req.body;
-  if (text === undefined) {
+  if (!text) {
     return res.status(400).json({
       status: 400,
       error: "댓글에 글을 작성해세요.",
