@@ -20,17 +20,31 @@ export const postJoin = async (req, res) => {
   const passwordRules =
     /^[a-zA-Z0-9!?@#$%^&*():;+-=~{}<>\_\[\]\|\\\"\'\,\.\/\`\₩]{6,15}$/;
   //const passwordRules = /^[a-zA-Z0-9]{6,15}$/;
-  if (name.length > 10 && name.length < 3) {
-    if (name.match(pattern)) {
+  if (!name) {
+    return res.status(400).json({
+      status: 400,
+      error: "이름을 공백을 제외한 2~10글자 이내로 작성해주세요.",
+    });
+  }
+  for (const check of name) {
+    if (check == " ") {
       return res.status(400).json({
         status: 400,
         error: "이름을 공백을 제외한 2~10글자 이내로 작성해주세요.",
       });
     }
-    return res.status(400).json({
-      status: 400,
-      error: "이름은 2~10글자 이내로 작성해주세요.",
-    });
+    if (name.length > 10 || name.length < 3) {
+      if (name.match(pattern)) {
+        return res.status(400).json({
+          status: 400,
+          error: "이름을 공백을 제외한 2~10글자 이내로 작성해주세요.",
+        });
+      }
+      return res.status(400).json({
+        status: 400,
+        error: "이름은 2~10글자 이내로 작성해주세요.",
+      });
+    }
   }
   if (passwordRules.test(password) === false) {
     return res.status(400).json({
@@ -328,17 +342,25 @@ export const postEdit = async (req, res) => {
       error: "이름을 공백을 제외한 2~10글자 이내로 작성해주세요.",
     });
   }
-  if (name.length > 10 || name.length < 3) {
-    if (name.match(pattern)) {
+  for (const check of name) {
+    if (check == " ") {
       return res.status(400).json({
         status: 400,
         error: "이름을 공백을 제외한 2~10글자 이내로 작성해주세요.",
       });
     }
-    return res.status(400).json({
-      status: 400,
-      error: "이름은 2~10글자 이내로 작성해주세요.",
-    });
+    if (name.length > 10 || name.length < 3) {
+      if (name.match(pattern)) {
+        return res.status(400).json({
+          status: 400,
+          error: "이름을 공백을 제외한 2~10글자 이내로 작성해주세요.",
+        });
+      }
+      return res.status(400).json({
+        status: 400,
+        error: "이름은 2~10글자 이내로 작성해주세요.",
+      });
+    }
   }
   if (introduction.length > 30) {
     return res.status(400).json({
